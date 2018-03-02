@@ -68,7 +68,7 @@ router.post("/detail", middlewares.verifyToken, function (req, res, next) {
                     role: req.user.role,
                 }
             }, {
-                padId: req.body.hasOwnProperty('padId') ? req.body.padId : false
+                padId: req.body.padId || false
             }).then(pad => {
                 return res.json({item: pad, user: req.user});
             })
