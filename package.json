@@ -1,0 +1,40 @@
+{
+  "name": "chain-pad",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "engines": {},
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "~1.18.2",
+    "circular-json": "^0.4.0",
+    "cli": "^1.0.1",
+    "composer-admin": "next",
+    "composer-client": "next",
+    "composer-common": "next",
+    "composer-connector-hlfv1": "next",
+    "composer-runtime-hlfv1": "next",
+    "config": "^1.27.0",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "~1.4.3",
+    "crypto-js": "*",
+    "debug": "~2.6.9",
+    "dotenv": "^5.0.1",
+    "express": "*",
+    "express-session": "^1.15.6",
+    "fs-extra": "*",
+    "grpc": "*",
+    "jsonwebtoken": "^8.1.1",
+    "lodash": "^4.17.5",
+    "log4js": "^2.5.3",
+    "mongodb": "^3.0.2",
+    "mongoose": "^5.0.3",
+    "morgan": "^1.9.0",
+    "npm": "^5.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.12"
+  }
+}

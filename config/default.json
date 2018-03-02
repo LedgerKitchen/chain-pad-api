@@ -1,0 +1,52 @@
+{
+  "chain-pad": {
+    "card": "admin@chainpad-network",
+    "architecture": {
+      "namespace": "org.chainpad",
+      "assets": {
+        "pad": {
+          "namespace": "org.chainpad.pad",
+          "class": "Pad",
+          "fullNamespace": "org.chainpad.pad.Pad",
+          "transactions": {
+            "createPad": {
+              "name": "createPad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.createPad"
+            },
+            "updatePad": {
+              "name": "updatePad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.updatePad"
+            }
+          }
+        },
+        "media": {
+          "namespace": "org.chainpad.pad",
+          "class": "Media",
+          "fullNamespace": "org.chainpad.pad.Media",
+          "transactions": {}
+        }
+      },
+      "participants": {
+        "user": {
+          "namespace": "org.chainpad.user",
+          "class": "User",
+          "fullNamespace": "org.chainpad.user.User",
+          "transactions": {
+            "createUser": {
+              "name": "createUser",
+              "namespace": "org.chainpad.admin",
+              "fullNamespace": "org.chainpad.admin.createUser"
+            },
+            "updateUser": {
+              "name": "updateUser",
+              "namespace": "org.chainpad.admin",
+              "fullNamespace": "org.chainpad.admin.updateUser"
+            }
+          }
+        }
+      }
+    }
+  }
+}
