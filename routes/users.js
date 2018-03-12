@@ -55,6 +55,7 @@ router.post("/edit", middlewares.verifyToken, function (req, res, next) {
 router.post("/search", middlewares.verifyToken, function (req, res, next) {
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
+            req.body.query = req.body.query || '';
             return Ledger.User.searchInMongo({
                 $or: [
                     {name: new RegExp('.*' + req.body.query + '.*', "i")},
