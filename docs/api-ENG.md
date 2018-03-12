@@ -16,7 +16,7 @@ Example of an error response
 
 #### 1. Registering and Receiving a Token
 ---
-Send `POST` request to the address` / auth / register`
+Send `POST` request to the address`/auth/register`
 
 In the next. releases at registration there will be a rigid confirmation of phone and mail, and only then registration, now we do not do it yet.
 
@@ -49,7 +49,7 @@ In response, we get such a json.
 
 #### 2. Authorize or receive a new token
 ---
-Send `POST` request to the address` / auth / login`
+Send `POST` request to the address`/auth/login`
 
 ##### List of fields in the query
 * loginField - [phone, email] is one of the options. This is what field is authorization.
@@ -66,7 +66,7 @@ In response, we get the same json as when registering - (Item 1).
 
 #### 3. Creating a PAD
 ---
-Send `POST` request to the address` / assets / pads / new`
+Send `POST` request to the address`/assets/pads/new`
 
 ##### List of fields in the query
 * name - Name
@@ -80,7 +80,7 @@ In response, we get json with success or failure.
 
 #### 4. Editing the PAD
 ---
-Send `POST` request to the address` / assets / pads / edit`
+Send `POST` request to the address `/assets/pads/edit`
 
 ##### List of fields in the query
 * padId - id Pad
@@ -94,7 +94,7 @@ In response, we get json with success or failure.
 
 #### 5. Getting the PAD by ID
 ---
-Send `POST` request to the address` / assets / pads / detail`
+Send `POST` request to the address `/assets/pads/detail`
 
 ##### List of fields in the query
 * token
@@ -147,9 +147,23 @@ In response, we get json c Pad and the current user.
 ```
 
 
-#### 6. Getting the Pad List
+#### 6. PAD status changes by ID
+---
+Send the `POST` request to the address `/assets/pads/<ACTION_NAME> `
 
-Send `GET` request to the address of` / assets / pads`
+<ACTION_NAME> can apply options
+
+* accept - confirm Pad
+* decline - reject Pad
+* delete - delete Pad
+
+##### List of fields in the query
+* token
+* padId
+
+#### 7. Getting the Pad List
+
+Send `GET` request to the address of`/assets/pads`
 
 ##### List of fields in the query
 * token
@@ -215,9 +229,9 @@ In response, we get json c Pads and the current user.
 ```
 
 
-#### 7. Search the list of users
+#### 8. Search the list of users
 
-Send `POST` request to the address` / participants / users / search`
+Send `POST` request to the address`/participants/users/search`
 
 ##### List of fields in the query
 * token
