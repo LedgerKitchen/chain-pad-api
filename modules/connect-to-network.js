@@ -1,8 +1,5 @@
 'use strict';
 
-const BCN = require('./bcn');
-const card = require('composer-common/lib/idcard');
-const AdminConnection = require('composer-admin').AdminConnection;
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 const config = require('config').get('chain-pad');
 const log = require('./logger.js');

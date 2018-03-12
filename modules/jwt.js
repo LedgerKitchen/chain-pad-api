@@ -30,18 +30,5 @@ module.exports = {
                 resolve(decodedToken)
             })
         })
-    },
-    checkAuth: function (req, res, next) {
-        if (req.session.user) {
-            UserMongo.findById(req.session.user._id).then(user => {
-                if (user) {
-                    next();
-                } else {
-                    throw {status: 403, message: "User not found"}
-                }
-            });
-        } else {
-            throw {status: 403, message: 'Unauthorized'}
-        }
     }
 };

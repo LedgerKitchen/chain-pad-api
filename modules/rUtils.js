@@ -1,4 +1,5 @@
 'use strict';
+
 const fs = require('fs');
 const path = require('path');
 
@@ -45,22 +46,8 @@ module.exports = {
                 } else if (error.indexOf('[AccessException:') - 1) {
                     arString = error.split('[AccessException:');
                 }
-
-                //let stringError = '';
                 if (arString[1]) {
                     let arString2 = arString[1].split(']');
-                    // if (arString2.length) {
-                    //     stringError = arString2[1]
-                    // } else {
-                    //     stringError = arString[1];
-                    // }
-                    // stringError = stringError.replace(/(^\s*)|(\s*)$/g, '');
-                    //
-                    // if (stringError.slice(-1) === ']') {
-                    //     stringError = stringError.slice(0, -1);
-                    // }
-                    //
-                    // return stringError.replace(/(^\s*)|(\s*)$/g, '');
                     return arString2[0];
                 } else {
                     return error;

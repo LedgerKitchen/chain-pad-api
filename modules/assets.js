@@ -30,6 +30,7 @@ class Assets {
         })
     }
 
+    //Search
     search(resource, data = {}) {
         let networkDefinition,
             filter,
@@ -60,8 +61,8 @@ class Assets {
         })
     };
 
-    //Create assets (transaction send)
-    create(resource, data) {
+    //Submit transaction\action
+    action(resource, data) {
         return this.connect.then((networkConnection) => {
             let networkDefinition = networkConnection.businessNetwork,
                 factory = networkDefinition.getFactory(),
@@ -72,20 +73,6 @@ class Assets {
                 return {success: true}
             });
         })
-    }
-
-    update(resource, data) {
-
-        return this.connect.then((networkConnection) => {
-            let networkDefinition = networkConnection.businessNetwork,
-                factory = networkDefinition.getFactory(),
-                serializer = networkDefinition.getSerializer();
-            return networkConnection.getAssetRegistry(resource.class).then(() => {
-                return networkConnection.submitTransaction(Object.assign(factory.newTransaction(resource.transaction.namespace, resource.transaction.name), serializer.fromJSON(data)));
-            }).then(() => {
-                return {success: true}
-            });
-        });
     }
 
 

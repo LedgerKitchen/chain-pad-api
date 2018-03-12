@@ -2,9 +2,7 @@
 
 const User = require("../modules/models/user");
 const Pad = require("../modules/models/pad");
-const Participants = require("../modules/participants");
 const History = require("../modules/history");
-
 
 module.exports = {
     init: function (card) {

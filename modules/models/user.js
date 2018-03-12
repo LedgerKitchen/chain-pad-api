@@ -27,14 +27,10 @@ class User extends Participants {
 
     searchInMongo(arFilter = {}) {
         return UserMongo.find(arFilter).select('-password').then((users) => {
-
             users.forEach((user, key) => {
-                console.log(user);
-                //users.push(}))
-                users[key] = Object.assign(user.toJSON(),{participantId: user.networkCard.split('@')[0]});
+                users[key] = Object.assign(user.toJSON(), {participantId: user.networkCard.split('@')[0]});
 
             });
-            console.log(users);
             return users;
         });
     }
@@ -106,7 +102,7 @@ class User extends Participants {
                     throw {error: "This user already exists!"};
                 }
 
-                return this.create({
+                return this.action({
                     class: this.participant['fullNamespace'],
                     transaction: this.participant['transactions']['createUser']
                 }, {
@@ -146,7 +142,7 @@ class User extends Participants {
     }
 
     updateUser(arData) {
-        return this.update({
+        return this.action({
             class: this.participant['fullNamespace'],
             transaction: this.participant['transactions']['updateUser']
         }, {

@@ -12,8 +12,7 @@ module.exports = {
                 next()
             })
             .catch((err) => {
-                log.warn("Invalid auth token provided.");
-                res.status(400)
+                res.status(403)
                     .json({success: false, message: "Invalid auth token provided."})
             })
     }

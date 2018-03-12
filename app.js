@@ -13,6 +13,7 @@ app.use(cookieParser());
 
 
 /******************* ROUTES *******************/
+app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/history', require('./routes/history'));//This only preview version
 app.use('/participants/users', require('./routes/users'));
@@ -22,7 +23,7 @@ app.use('/assets/pads', require('./routes/pads'));
 /******************* CATCH ERRORS *******************/
 app.use(function (req, res, next) {
     res.status(404);
-    res.send({success: false, message: 'Path not found'});
+    res.send({success: false, message: '404 Path not found'});
     return;
 });
 app.use(function (err, req, res, next) {

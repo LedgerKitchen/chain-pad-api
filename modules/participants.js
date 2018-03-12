@@ -53,7 +53,7 @@ class Participants {
     };
 
     //Create participant (transaction send)
-    create(resource, data) {
+    action(resource, data) {
         let networkDefinition;
         return this.connect.then((networkConnection) => {
             networkDefinition = networkConnection.businessNetwork;
@@ -66,22 +66,6 @@ class Participants {
                 return {success: true, data: serializer.fromJSON(data).data}
             })
         })
-    }
-
-    //Update participant (transaction send)
-    update(resource, data) {
-        let networkDefinition;
-        return this.connect.then((networkConnection) => {
-            networkDefinition = networkConnection.businessNetwork;
-            return networkConnection.getParticipantRegistry(resource.class).then(() => {
-                let factory = networkDefinition.getFactory();
-                let serializer = networkDefinition.getSerializer();
-
-                return networkConnection.submitTransaction(Object.assign(factory.newTransaction(resource.transaction.namespace, resource.transaction.name), serializer.fromJSON(data)));
-            }).then(() => {
-                return {success: true}
-            });
-        });
     }
 
     //Identity participant

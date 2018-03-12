@@ -10,8 +10,6 @@ router.get("/list", middlewares.verifyToken, function (req, res, next) {
             return res.json({items: histories, user: req.user});
         }).catch((result) => {
             let error = result.error || result.message;
-            res.status(500);
-
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
     });

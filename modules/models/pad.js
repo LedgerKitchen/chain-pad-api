@@ -38,7 +38,7 @@ class Pad extends Assets {
             arData.participantsInvited = [arData.participantsInvited];
         }
 
-        return this.create({
+        return this.action({
             class: this.asset['fullNamespace'],
             transaction: this.asset['transactions']['createPad']
         }, {
@@ -55,7 +55,7 @@ class Pad extends Assets {
         if (typeof arData.participantsInvited === 'string') {
             arData.participantsInvited = [arData.participantsInvited];
         }
-        return this.update({
+        return this.action({
             class: this.asset['fullNamespace'],
             transaction: this.asset['transactions']['updatePad']
         }, {
@@ -64,6 +64,27 @@ class Pad extends Assets {
                 "$class": this.asset['fullNamespace'],
             }, arData)
         });
+    }
+
+    acceptPad(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['acceptPad']
+        }, Object.assign({"$class": this.asset['transactions']['acceptPad']['fullNamespace']}, arData));
+    }
+
+    declinePad(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['declinePad']
+        }, Object.assign({"$class": this.asset['transactions']['declinePad']['fullNamespace']}, arData));
+    }
+
+    publishPad(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['publishPad']
+        }, Object.assign({"$class": this.asset['transactions']['publishPad']['fullNamespace']}, arData));
     }
 }
 

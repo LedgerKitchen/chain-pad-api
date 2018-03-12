@@ -18,6 +18,21 @@
               "name": "updatePad",
               "namespace": "org.chainpad.pad",
               "fullNamespace": "org.chainpad.pad.updatePad"
+            },
+            "acceptPad": {
+              "name": "acceptPad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.acceptPad"
+            },
+            "declinePad": {
+              "name": "declinePad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.declinePad"
+            },
+            "publishPad": {
+              "name": "publishPad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.publishPad"
             }
           }
         },
