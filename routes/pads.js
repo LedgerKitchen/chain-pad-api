@@ -136,6 +136,24 @@ router.post("/publish", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
+router.post("/delete", middlewares.verifyToken, function (req, res, next) {
+    return Ledger.init(req.user.networkCard)
+        .then((Ledger) => {
+            if (!req.body.padId) {
+                throw new Error('Missing required field padId');
+            }
+            return Ledger.Pad.deletePad({
+                padId: req.body.padId
+            }).then(result => {
+                return res.json(result);
+            })
+        }).catch((result) => {
+            let error = result.error || result.message;
+
+            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+        });
+});
+
 /******************* END PADS ROUTES *******************/
 
 

@@ -33,6 +33,11 @@
               "name": "publishPad",
               "namespace": "org.chainpad.pad",
               "fullNamespace": "org.chainpad.pad.publishPad"
+            },
+            "deletePad": {
+              "name": "deletePad",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.deletePad"
             }
           }
         },

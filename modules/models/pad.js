@@ -86,6 +86,13 @@ class Pad extends Assets {
             transaction: this.asset['transactions']['publishPad']
         }, Object.assign({"$class": this.asset['transactions']['publishPad']['fullNamespace']}, arData));
     }
+
+    deletePad(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['deletePad']
+        }, Object.assign({"$class": this.asset['transactions']['deletePad']['fullNamespace']}, arData));
+    }
 }
 
 module.exports = Pad;
