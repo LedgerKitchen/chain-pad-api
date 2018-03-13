@@ -24,7 +24,7 @@ router.post('/login', function (req, res, next) {
             return res.json({user: user, success: true, token: jwtToken});
         })
         .catch((error) => {
-            res.status(401);
+
             return res.json({success: false, message: error.toString()});
         })
 });
@@ -45,7 +45,7 @@ router.post('/register', function (req, res, next) {
                 });
         }).catch((result) => {
             let error = result.error || result.message;
-            res.status(401);
+
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
 });
