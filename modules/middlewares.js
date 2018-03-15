@@ -12,7 +12,7 @@ module.exports = {
                 next()
             })
             .catch((err) => {
-                res.json({success: false, message: "Invalid auth token provided."})
+                res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 403});
             })
     }
 };

@@ -2,34 +2,29 @@ let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 let User = new mongoose.Schema({
-    name : {
+    name: {
         type: String,
-        required: true
+        required: false
     },
-    lastName : {
+    lastName: {
         type: String,
-        required: true
+        required: false
     },
-    email : {
+    email: {
         type: String,
-        unique: true,
-        required: true
+        required: false
     },
-    phone : {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password : {
-        type: String,
-        required: true
-    },
-    networkCard : {
+    phone: {
         type: String,
         unique: true,
         required: true
     },
-    role : {
+    networkCard: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    role: {
         type: String,
         required: false,
         default: "PARTICIPANT"

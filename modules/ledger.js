@@ -1,7 +1,7 @@
 'use strict';
 
-const User = require("../modules/models/user");
-const Pad = require("../modules/models/pad");
+const User = require("./repo/userRepository");
+const Pad = require("./repo/padRepository");
 const History = require("../modules/history");
 
 module.exports = {

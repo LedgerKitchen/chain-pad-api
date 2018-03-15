@@ -1,13 +1,12 @@
 require('dotenv').load();
 
-let UserMongo = require('./modules/models/user');
+let UserMongo = require('./modules/repo/userRepository');
 
 let data = {
     name: 'Admin',
     lastName: 'Adminov',
     email: 'admin@chain-pad.com',
-    phone: '+1 (999) 99-9999',
-    password: '123456',
+    phone: '79999999999',
     networkCard: process.env.CARD,
     role: 'ADMIN'
 };

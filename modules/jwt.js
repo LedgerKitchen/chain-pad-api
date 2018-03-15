@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const config = require('config').get('chain-pad');
-const UserMongo = require("../modules/models/userMongo");
+const UserMongo = require("./models/userModel");
 
 module.exports = {
     encodeUserForJWT: function (user) {

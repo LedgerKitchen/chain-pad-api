@@ -3,59 +3,69 @@ const router = express.Router();
 let Ledger = require("../modules/ledger");
 let rUtils = require("../modules/rUtils");
 let JWT = require("../modules/jwt");
-const User = require("../modules/models/user");
+let log = require("../modules/logger");
+const User = require("../modules/repo/userRepository");
+const SMS = require("../modules/repo/smsCodeRepository");
 
 
 /************** Authenticate users **************/
-router.post('/login', function (req, res, next) {
-    let jwtToken;
-    let data = req.body;
-    if (data.phone) {
-        data.phone = data.phone.replace(/[^0-9]/gim, '');
-    }
-    return User.checkUserMongo(data, data.loginField || 'email')
-        .then((user) => {
-            if (typeof user.password !== 'undefined') {
-                user.password = "<--SECURITY_FIELD-->";
-            }
-            user.participantId = user.networkCard.split('@')[0];
 
-            jwtToken = JWT.createJWToken(user);
-            return res.json({user: user, success: true, token: jwtToken});
-        })
-        .catch((error) => {
+router.post('/send-sms', function (req, res, next) {
+    let data = req.body;
+    data.phone = data.phone.replace(/[^0-9]/gim, '');
+    return SMS.add(data.phone)
+        .then(code => {
+            log.info('Code has been sent -> ' + code);
+            return SMS.send(req.body.phone, code).then(() => {
+                return res.json({success: true, code: code});
+            });
+        }).catch(err => {
+            let error = err.message || {};
+
+            //Duplicate
+            if (err.code === 11000) {
+                error = "Re-sending is possible not more than 1 time in 120 seconds";
+            }
 
             return res.json({success: false, message: error.toString()});
         })
 });
-router.post('/register', function (req, res, next) {
+
+router.post('/sign-in', function (req, res, next) {
     let jwtToken;
     let data = req.body;
     data.phone = data.phone.replace(/[^0-9]/gim, '');
-    return Ledger.init(require('config').get('chain-pad')['card'])
-        .then((Ledger) => {
-            return Ledger.User.createUser(data)
-                .then((user) => {
-                    if (typeof user.User.password !== 'undefined') {
-                        user.User.password = "<--SECURITY_FIELD-->";
-                    }
-                    jwtToken = JWT.createJWToken(user.User);
 
-                    return res.json({user: user.User, success: true, token: jwtToken});
-                });
-        }).catch((result) => {
-            let error = result.error || result.message;
+    return SMS.get(data.phone, data.code).then(() => {
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
-        });
+        return User.checkUserMongo(data).then(result => {
+            if (result.user) {
+                result.user.participantId = result.user.networkCard.split('@')[0];
+                jwtToken = JWT.createJWToken(result.user);
+
+                return res.json({user: result.user, success: true, token: jwtToken});
+            } else {
+                return Ledger.init(require('config').get('chain-pad')['card'])
+                    .then((Ledger) => {
+                        return Ledger.User.createUser(data)
+                            .then((result) => {
+                                jwtToken = JWT.createJWToken(result.user);
+                                return res.json({user: result.user, success: true, token: jwtToken});
+                            });
+                    }).catch((result) => {
+                        let error = result.error || result.message;
+
+                        return res.send({
+                            success: false,
+                            message: rUtils.parseErrorHLF(error),
+                            httpErrorCode: 403,
+                        });
+                    });
+            }
+        })
+    }).catch(error => {
+        return res.json({success: false, message: error.toString(), httpErrorCode: 403});
+    });
 });
-
-/************* Logout users *************/
-// router.get('/logout', function (req, res, next) {
-//     // if (req.session.user) {
-//     //     delete req.session.user;
-//     // }
-//     return res.send({success: true, message: "Success logout", status: 403});
-// });
 
 module.exports = router;

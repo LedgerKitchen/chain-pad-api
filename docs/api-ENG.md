@@ -12,22 +12,23 @@ Example of an error response
     "message": "Incorrect Email or Password"
 }
 ```
-
-
-#### 1. Registering and Receiving a Token
+#### 1. Отрпавка SMS кода для авторизации
 ---
-Send `POST` request to the address`/auth/register`
+Send `POST` request to the address `/auth/send-sms` 
 
-In the next. releases at registration there will be a rigid confirmation of phone and mail, and only then registration, now we do not do it yet.
+> Now the code will be sent with an answer. While there is no real SMS sending.
+
+
+#### 2. Authorize \ Register
+---
+Send `POST` request to the address `/auth/sign-in` 
 
 ##### List of fields in the query
-* name - First name
-* lastName - Last name
 * phone - phone
-* password - password
-* email - mail
+* code - sms code
 
-In response, we get such a json.
+> If the user is new, the system automatically creates it.
+
 > I recommend that you save the token, then it will be required to send any requests.
 
 ```json
@@ -46,23 +47,6 @@ In response, we get such a json.
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Im5hbWUiOiJzYWRvbiIsImxhc3ROYW1lIjoic2Fkb24iLCJlbWFpbCI6IjExMXNhZG9uc2VyZ2V5QGdtYWlsLmNvbSIsInBob25lIjoiNzk4MTk0Njk5MDYxMTExIiwicGFzc3dvcmQiOiI8LS1TRUNVUklUWV9GSUVMRC0tPiIsIm5ldHdvcmtDYXJkIjoiYjMwZTcxNGQxOWM0MmJlYzhmZDBmYjQzZmQwMTViZDQwNzY5ZWI2MWExMDI3NThiZGY5ODhlOGE0ODA3ZjA4MkBjaGFpbnBhZC1uZXR3b3JrIiwicm9sZSI6IlBBUlRJQ0lQQU5UIiwiX2lkIjoiNWE5N2UwYTc1ZGQ4MGM3M2E5NGI2NTEzIiwiX192IjowfSwiaWF0IjoxNTE5OTAyODg3LCJleHAiOjE1MjAxNjIwODd9.-tS9vrUx-abUkIhMDWPQ8Cam0AOcTApRxElWkU6XYuw"
 }
 ```
-
-#### 2. Authorize or receive a new token
----
-Send `POST` request to the address`/auth/login`
-
-##### List of fields in the query
-* loginField - [phone, email] is one of the options. This is what field is authorization.
-* email - to be filled in if loginField == 'email'
-* phone - is filled in if loginField == 'phone'
-* password - password specified during registration
-
-In response, we get the same json as when registering - (Item 1).
-> I recommend that you save the token, then it will be required to send any requests.
-
-
-> When creating a Pad, you may need to bind a participant, for this there is a field `participantsInvited` the user field associated with the field `participantId`
-
 
 #### 3. Creating a PAD
 ---

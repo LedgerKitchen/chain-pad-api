@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const db = mongoose.connect(process.env.MONGO_HOST, {});
 db.Promise = require('bluebird');
-const UserMongo = require('./userMongo');
+const UserMongo = require('../models/userModel');
 const log = require('../logger');
 
 class User extends Participants {
@@ -51,7 +51,7 @@ class User extends Participants {
         return UserMongo.findOne(field);
     }
 
-    static checkUserMongo(userData, byField = 'email') {
+    static checkUserMongo(userData, byField = 'phone') {
         let field;
         switch (byField) {
             case 'email':
@@ -67,23 +67,32 @@ class User extends Participants {
 
         return UserMongo.findOne(field)
             .then(user => {
-                if (user && user.password === hash(userData.password)) {
-                    return Promise.resolve(user);
+                if (user) {
+                    return Promise.resolve(Object.assign({user: user}));
                 } else {
-                    return Promise.reject("Incorrect Email or Password");
+                    return Promise.resolve({user: null});
                 }
             });
     }
 
     static createUserMongo(userData) {
         let user = {
-            name: userData.name,
-            lastName: userData.lastName,
-            email: userData.email,
             phone: userData.phone,
-            password: hash(userData.password),
             networkCard: userData.networkCard
         };
+
+        if (userData.name) {
+            user.name = userData.name;
+        }
+
+        if (userData.lastName) {
+            user.lastName = userData.lastName;
+        }
+
+        if (userData.name) {
+            user.email = userData.email;
+        }
+
 
         if (userData.role) {
             user.role = userData.role;
@@ -93,12 +102,11 @@ class User extends Participants {
     }
 
     createUser(arData) {
-        const id = SHA256(arData.email + arData.phone).toString();
-        return UserMongo.find()
-            .or([{email: arData.email}, {phone: arData.phone}])
+        const id = arData.phone;
+        return UserMongo.findOne({phone: arData.phone})
             .then(userMongo => {
 
-                if (typeof userMongo !== 'undefined' && userMongo.length > 0) {
+                if (userMongo) {
                     throw {error: "This user already exists!"};
                 }
 
@@ -120,17 +128,16 @@ class User extends Participants {
                             login: id,
                         }).then(participant => {
                             if (result.success) {
-                                if (!arData.password) {
-                                    arData.password = participant.userSecret;
-                                }
 
                                 if (!arData.networkCard) {
                                     arData.networkCard = participant.cardName;
                                 }
 
-                                return User.createUserMongo(arData).then((user) => {
-                                    return {success: true, User: user};
-                                })
+                                return User.createUserMongo(arData).then(user => Object.assign({}, {
+                                    success: true,
+                                    user: user
+                                }));
+
                             }
                         });
                     }
