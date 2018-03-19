@@ -50,7 +50,7 @@ Send `POST` request to the address `/auth/sign-in`
 
 #### 3. Creating a PAD
 ---
-Send `POST` request to the address`/assets/pads/new`
+Send `POST` request to the address`/pads/new`
 
 ##### List of fields in the query
 * name - Name
@@ -64,7 +64,7 @@ In response, we get json with success or failure.
 
 #### 4. Editing the PAD
 ---
-Send `POST` request to the address `/assets/pads/edit`
+Send `POST` request to the address `/pads/edit`
 
 ##### List of fields in the query
 * padId - id Pad
@@ -78,7 +78,7 @@ In response, we get json with success or failure.
 
 #### 5. Getting the PAD by ID
 ---
-Send `POST` request to the address `/assets/pads/detail`
+Send `POST` request to the address `/pads/detail`
 
 ##### List of fields in the query
 * token
@@ -133,7 +133,7 @@ In response, we get json c Pad and the current user.
 
 #### 6. PAD status changes by ID
 ---
-Send the `POST` request to the address `/assets/pads/<ACTION_NAME> `
+Send the `POST` request to the address `/pads/<ACTION_NAME> `
 
 <ACTION_NAME> can apply options
 
@@ -147,7 +147,7 @@ Send the `POST` request to the address `/assets/pads/<ACTION_NAME> `
 
 #### 7. Getting the Pad List
 
-Send `GET` request to the address of`/assets/pads`
+Send `GET` request to the address of`/pads`
 
 ##### List of fields in the query
 * token
@@ -215,7 +215,7 @@ In response, we get json c Pads and the current user.
 
 #### 8. Search the list of users
 
-Send `POST` request to the address`/participants/users/search`
+Send `POST` request to the address`/users/search`
 
 ##### List of fields in the query
 * token

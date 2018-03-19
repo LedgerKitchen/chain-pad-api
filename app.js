@@ -16,8 +16,8 @@ app.use(cookieParser());
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/history', require('./routes/history'));//This only preview version
-app.use('/participants/users', require('./routes/users'));
-app.use('/assets/pads', require('./routes/pads'));
+app.use('/users', require('./routes/users'));
+app.use('/pads', require('./routes/pads'));
 /******************* END ROUTES *******************/
 
 /******************* CATCH ERRORS *******************/

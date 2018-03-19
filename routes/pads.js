@@ -5,7 +5,7 @@ let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
 
 /******************* PADS ROUTES *******************/
-///assets/pads/new
+///pads/new
 router.post("/", middlewares.verifyToken, function (req, res, next) {
 
     return Ledger.init(req.user.networkCard)
