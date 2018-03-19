@@ -6,7 +6,7 @@ let middlewares = require('../modules/middlewares');
 
 /******************* PADS ROUTES *******************/
 ///assets/pads/new
-router.get("/", middlewares.verifyToken, function (req, res, next) {
+router.post("/", middlewares.verifyToken, function (req, res, next) {
 
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
