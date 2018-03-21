@@ -44,11 +44,12 @@ class Participants {
 
     getAllParticipantByResourceName(name, id = null) {
         return this.connect.then((networkConnection) => {
-            return networkConnection.getParticipantRegistry(name).then((r) => {
-                return (id) ? r.get(id) : r.resolveAll();
-            }).then((result) => {
-                return result;
-            })
+            return networkConnection.getParticipantRegistry(name)
+                .then((r) => {
+                    return (id) ? r.resolve(id) : r.resolveAll();
+                }).then((result) => {
+                    return result;
+                })
         })
     };
 
@@ -63,7 +64,12 @@ class Participants {
 
                 return networkConnection.submitTransaction(Object.assign(factory.newTransaction(resource.transaction.namespace, resource.transaction.name), serializer.fromJSON(data)));
             }).then(() => {
-                return {success: true, data: serializer.fromJSON(data).data}
+
+                if (typeof data !== 'object') {
+                    data = serializer.fromJSON(data)
+                }
+
+                return {success: true, data: data.data}
             })
         })
     }

@@ -101,6 +101,33 @@ class User extends Participants {
         return new UserMongo(user).save();
     }
 
+    static updateUserMongo(id, userData) {
+            console.log(id);
+        return UserMongo.findOne({phone: id}).then(user => {
+
+            if (userData.name) {
+                user.name = userData.name;
+            }
+
+            if (userData.lastName) {
+                user.lastName = userData.lastName;
+            }
+
+            if (userData.name) {
+                user.email = userData.email;
+            }
+
+
+            if (userData.role) {
+                user.role = userData.role;
+            }
+            console.log(user);
+            return user.save();
+        });
+
+
+    }
+
     createUser(arData) {
         const id = arData.phone;
         return UserMongo.findOne({phone: arData.phone})
@@ -157,6 +184,12 @@ class User extends Participants {
             data: Object.assign({
                 "$class": this.participant['fullNamespace'],
             }, arData)
+        }).then(user => {
+            console.log(user.data);
+            return User.updateUserMongo(user.data.userId, user.data).then(user => Object.assign({}, {
+                success: true,
+                user: user
+            }));
         });
     }
 }

@@ -5,12 +5,24 @@ let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
 
 /******************* ALL PARTICIPANTS ROUTES *******************/
-router.get("/", middlewares.verifyToken, function (req, res, next) {
+router.post("/", middlewares.verifyToken, function (req, res, next) {
 
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers().then(users => {
                 return res.json({success: true, items: users, user: req.user});
+            })
+        }).catch((result) => {
+            let error = result.error || result.message;
+
+            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+        });
+});
+router.post("/me", middlewares.verifyToken, function (req, res, next) {
+    return Ledger.init(req.user.networkCard)
+        .then((Ledger) => {
+            return Ledger.User.getAllUsers(req.user.participantId).then(user => {
+                return res.json({success: true, item: user, user: req.user});
             })
         }).catch((result) => {
             let error = result.error || result.message;
@@ -40,7 +52,11 @@ router.post("/edit", middlewares.verifyToken, function (req, res, next) {
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
-            data.phone = data.phone.replace(/[^0-9]/gim, '');
+            if(data.phone) {
+                data.phone = data.phone.replace(/[^0-9]/gim, '');
+            }else{
+                data.phone = data.userId;
+            }
             return Ledger.User.updateUser(data)
                 .then((result) => {
                     return res.json(result);

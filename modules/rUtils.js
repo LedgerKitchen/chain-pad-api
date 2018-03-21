@@ -36,6 +36,8 @@ module.exports = {
     getExportCardPath: './exportsCards/',
     parseErrorHLF: function (error) {
         try {
+
+
             if (this.extractJSON(error) !== null) {
                 return this.extractJSON(error).message || this.extractJSON(error).toString();
             } else {
@@ -43,9 +45,12 @@ module.exports = {
 
                 if (error.indexOf('[Error:') > -1) {
                     arString = error.split('[Error:');
-                } else if (error.indexOf('[AccessException:') - 1) {
+                } else if (error.indexOf('[AccessException:') > -1) {
                     arString = error.split('[AccessException:');
+                }else if (error.indexOf('failure:') > -1) {
+                    arString = error.split('failure:');
                 }
+
                 if (arString[1]) {
                     let arString2 = arString[1].split(']');
                     return arString2[0];

@@ -56,13 +56,13 @@
           "transactions": {
             "createUser": {
               "name": "createUser",
-              "namespace": "org.chainpad.admin",
-              "fullNamespace": "org.chainpad.admin.createUser"
+              "namespace": "org.chainpad.user",
+              "fullNamespace": "org.chainpad.user.createUser"
             },
             "updateUser": {
               "name": "updateUser",
-              "namespace": "org.chainpad.admin",
-              "fullNamespace": "org.chainpad.admin.updateUser"
+              "namespace": "org.chainpad.user",
+              "fullNamespace": "org.chainpad.user.updateUser"
             }
           }
         }
