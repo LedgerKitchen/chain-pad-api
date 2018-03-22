@@ -36,8 +36,6 @@ module.exports = {
     getExportCardPath: './exportsCards/',
     parseErrorHLF: function (error) {
         try {
-
-
             if (this.extractJSON(error) !== null) {
                 return this.extractJSON(error).message || this.extractJSON(error).toString();
             } else {

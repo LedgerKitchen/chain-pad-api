@@ -5,7 +5,7 @@ let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
 
 /******************* ALL PARTICIPANTS ROUTES *******************/
-router.post("/", middlewares.verifyToken, function (req, res, next) {
+router.post("/", [middlewares.verifyToken, middlewares.onlyAdminAccess], function (req, res, next) {
 
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
@@ -30,7 +30,7 @@ router.post("/me", middlewares.verifyToken, function (req, res, next) {
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
 });
-router.post("/new", middlewares.verifyToken, function (req, res, next) {
+router.post("/new", [middlewares.verifyToken, middlewares.onlyAdminAccess], function (req, res, next) {
 
     return Ledger.init(req.user.networkCard)
         .then((Ledger) => {
@@ -74,10 +74,10 @@ router.post("/search", middlewares.verifyToken, function (req, res, next) {
             req.body.query = req.body.query || '';
             return Ledger.User.searchInMongo({
                 $or: [
-                    {name: new RegExp('.*' + req.body.query + '.*', "i")},
-                    {lastName: new RegExp('.*' + req.body.query + '.*', "i")},
+                    //{name: new RegExp('.*' + req.body.query + '.*', "i")},
+                    //{lastName: new RegExp('.*' + req.body.query + '.*', "i")},
                     {phone: new RegExp('.*' + req.body.query.replace(/[^0-9]/gim, '') + '.*', "i")},
-                    {email: new RegExp('.*' + req.body.query + '.*', "i")}
+                    //{email: new RegExp('.*' + req.body.query + '.*', "i")}
                 ],
                 $and: [{
                     role: {$eq: 'PARTICIPANT'},

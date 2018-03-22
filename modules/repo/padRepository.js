@@ -31,8 +31,9 @@ class Pad extends Assets {
     }
 
     createPad(arData) {
-        let date = new Date(),
-            id = SHA256(JSON.stringify(arData) + date.toJSON()).toString();
+        let date, id;
+        date = new Date();
+        id = SHA256(JSON.stringify(arData) + date.toJSON()).toString();
 
         if (typeof arData.participantsInvited === 'string') {
             arData.participantsInvited = [arData.participantsInvited];

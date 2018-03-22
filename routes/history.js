@@ -4,7 +4,7 @@ let middlewares = require('../modules/middlewares');
 let Ledger = require("../modules/ledger");
 let rUtils = require("../modules/rUtils");
 
-router.get("/list", middlewares.verifyToken, function (req, res, next) {
+router.get("/list", [middlewares.verifyToken, middlewares.onlyAdminAccess], function (req, res, next) {
     Ledger.init(req.user.networkCard).then((Ledger) => {
         Ledger.History.getAllHistory().then((histories) => {
             return res.json({items: histories, user: req.user});
