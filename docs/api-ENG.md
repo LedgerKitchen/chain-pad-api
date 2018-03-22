@@ -249,3 +249,31 @@ In response, we get json c Pads and the current user.
     }
 ]
 ```
+
+#### 9. Get authorized user
+
+
+Send `POST` request to the address `/users/me`
+
+##### List of fields in the query
+* token
+
+
+Response 
+* item - user object in blockchain
+* user -user object in mongo DB
+
+
+#### 10. Update user
+
+
+Send `POST` request to the address `/users/edit`
+
+##### List of fields in the query
+* token - required
+* userId - required, here user phone number (only numbers 79999999999)
+* name -
+* lastName - 
+* email - 
+* phone - 
+* role  - PARTICIPANT or ADMIN
