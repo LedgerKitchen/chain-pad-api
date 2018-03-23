@@ -9,8 +9,9 @@ module.exports = {
         JWT.verifyJWTToken(token).then((decodedToken) => {
             return User.getUserMongo({phone: decodedToken.data.phone}, 'phone');
         }).then(user => {
-            req.user = user;
+            req.user = user.toObject();
             req.user.participantId = req.user.networkCard.split('@')[0];
+
             return next()
         }).catch(error => {
             res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 403});

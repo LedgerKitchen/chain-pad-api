@@ -102,7 +102,6 @@ class User extends Participants {
     }
 
     static updateUserMongo(id, userData) {
-            console.log(id);
         return UserMongo.findOne({phone: id}).then(user => {
 
             if (userData.name) {
@@ -121,7 +120,7 @@ class User extends Participants {
             if (userData.role) {
                 user.role = userData.role;
             }
-            console.log(user);
+
             return user.save();
         });
 
@@ -185,7 +184,6 @@ class User extends Participants {
                 "$class": this.participant['fullNamespace'],
             }, arData)
         }).then(user => {
-            console.log(user.data);
             return User.updateUserMongo(user.data.userId, user.data).then(user => Object.assign({}, {
                 success: true,
                 user: user

@@ -20,6 +20,32 @@ class History {
         })
     };
 
+    getAllHistoryByCurrentParticipant() {
+        let networkDefinition,
+            el = [],
+            ar = [];
+
+        return this.connect.then((networkConnection) => {
+            networkDefinition = networkConnection.businessNetwork;
+            //WHERE (identityUsed CONTAINS (name == _$participantName))
+            let query = networkConnection.buildQuery('SELECT org.hyperledger.composer.system.HistorianRecord WHERE (participantInvoking == _$participantName)');
+            return networkConnection.query(query, {participantName: 'resource:org.chainpad.user.User#' + networkConnection.getCard().getUserName()});
+        }).then((result) => {
+
+            let serializer = networkDefinition.getSerializer();
+            result.forEach(function (asset) {
+                ar = serializer.toJSON(asset);
+                el.push(ar);
+            });
+
+            el.sort(function (a, b) {
+                return new Date(b.transactionTimestamp) - new Date(a.transactionTimestamp);
+            });
+
+            return el;
+        })
+    }
+
     searchInHistory(identifier) {
         let networkDefinition,
             el = [],
