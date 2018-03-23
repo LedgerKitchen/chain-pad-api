@@ -16,8 +16,17 @@ router.post('/send-sms', function (req, res, next) {
     return SMS.add(data.phone)
         .then(code => {
             log.info('Code has been sent -> ' + code);
-            return SMS.send(req.body.phone, code).then(() => {
-                return res.json({success: true, code: code});
+            return SMS.send(req.body.phone, code).then((SMSSend) => {
+                if (SMSSend.success) {
+                    if (process.env.DEBUG) {
+                        return res.json({success: true, code: code});
+                    }
+                    return res.json({success: true});
+                } else {
+                    return SMS.remove(data.phone).then(() => {
+                        return res.json({success: false, message: SMSSend.message});
+                    });
+                }
             });
         }).catch(err => {
             let error = err.message || {};
@@ -37,31 +46,32 @@ router.post('/sign-in', function (req, res, next) {
     data.phone = data.phone.replace(/[^0-9]/gim, '');
 
     return SMS.get(data.phone, data.code).then(() => {
+        return SMS.remove(data.phone).then(() => {
+            return User.checkUserMongo(data).then(result => {
+                if (result.user) {
+                    result.user.participantId = result.user.networkCard.split('@')[0];
+                    jwtToken = JWT.createJWToken(result.user);
 
-        return User.checkUserMongo(data).then(result => {
-            if (result.user) {
-                result.user.participantId = result.user.networkCard.split('@')[0];
-                jwtToken = JWT.createJWToken(result.user);
+                    return res.json({user: result.user, success: true, token: jwtToken});
+                } else {
+                    return Ledger.init(require('config').get('chain-pad')['card'])
+                        .then((Ledger) => {
+                            return Ledger.User.createUser(data)
+                                .then((result) => {
+                                    jwtToken = JWT.createJWToken(result.user);
+                                    return res.json({user: result.user, success: true, token: jwtToken});
+                                });
+                        }).catch((result) => {
+                            let error = result.error || result.message;
 
-                return res.json({user: result.user, success: true, token: jwtToken});
-            } else {
-                return Ledger.init(require('config').get('chain-pad')['card'])
-                    .then((Ledger) => {
-                        return Ledger.User.createUser(data)
-                            .then((result) => {
-                                jwtToken = JWT.createJWToken(result.user);
-                                return res.json({user: result.user, success: true, token: jwtToken});
+                            return res.send({
+                                success: false,
+                                message: rUtils.parseErrorHLF(error),
+                                httpErrorCode: 403,
                             });
-                    }).catch((result) => {
-                        let error = result.error || result.message;
-
-                        return res.send({
-                            success: false,
-                            message: rUtils.parseErrorHLF(error),
-                            httpErrorCode: 403,
                         });
-                    });
-            }
+                }
+            })
         })
     }).catch(error => {
         return res.json({success: false, message: error.toString(), httpErrorCode: 403});

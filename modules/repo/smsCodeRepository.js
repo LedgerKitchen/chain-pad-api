@@ -1,5 +1,6 @@
 let smsCode = require('../models/smsCodeModel');
 let log = require('../logger');
+const axios = require('axios');
 
 exports.add = phone => smsCode.create({phone}).then(result => result.code);
 exports.get = (phone, code) => smsCode.findOne({phone: phone, code: code})
@@ -13,5 +14,22 @@ exports.get = (phone, code) => smsCode.findOne({phone: phone, code: code})
 exports.remove = phone => smsCode.remove({phone});
 
 exports.send = (phone, text) => {
-    return Promise.resolve();
+
+    return axios({
+        url: "https://api.smsglobal.com/http-api.php",
+        method: "POST",
+        responseType: 'json',
+        params: {
+            action: "sendsms",
+            user: "i1h7r90u",
+            password: "QtZL2o9Y",
+            from: "ChainPad",
+            to: phone,
+            text: "You activation code: " + text,
+            //maxsplit: "",
+            //scheduledatetime: "",
+        }
+    }).then(function (response) {
+        return {success: response.data.indexOf("OK") > -1, message: response.data};
+    })
 };
