@@ -21,9 +21,9 @@ exports.send = (phone, text) => {
         responseType: 'json',
         params: {
             action: "sendsms",
-            user: "i1h7r90u",
-            password: "QtZL2o9Y",
-            from: "ChainPad",
+            user: process.env.SMS_USER,
+            password: process.env.SMS_PASSWORD,
+            from:  process.env.SMS_FROM,
             to: phone,
             text: "You activation code: " + text,
             //maxsplit: "",
