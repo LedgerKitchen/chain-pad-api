@@ -4,6 +4,8 @@
 const Assets = require('../assets');
 const SHA256 = require("crypto-js/sha256");
 const crypto = require('crypto');
+const ipfsAPI = require('ipfs-api');
+let chainCrypto = require('../chainCrypto');
 
 class Pad extends Assets {
 
@@ -22,12 +24,27 @@ class Pad extends Assets {
         if (arFilter.hasOwnProperty('padId')) {
             return this.getAssetById({
                 class: this.asset['fullNamespace']
-            }, arFilter.padId);
+            }, arFilter.padId).then(pad => {
+
+                if (pad.cryptoAlgorithm) {
+                    pad.text = chainCrypto.decryptText(pad.text);
+                }
+
+                return pad;
+            });
         }
 
         return this.search({
             class: this.asset['fullNamespace']
-        }, arFilter);
+        }, arFilter).then(pads => {
+            return pads.map(pad => {
+                if (pad.cryptoAlgorithm) {
+                    pad.text = chainCrypto.decryptText(pad.text);
+                }
+
+                return pad;
+            })
+        });
     }
 
     createPad(arData) {
@@ -39,6 +56,12 @@ class Pad extends Assets {
             arData.participantsInvited = [arData.participantsInvited];
         }
 
+        if (arData.text) {
+            arData.text = chainCrypto.encryptText(arData.text);
+            arData.cryptoAlgorithm = process.env.CHAINPAD_CRYPTO_ALGHORITM;
+            arData.crc = chainCrypto.crc(arData.text);
+        }
+
         return this.action({
             class: this.asset['fullNamespace'],
             transaction: this.asset['transactions']['createPad']
@@ -48,6 +71,8 @@ class Pad extends Assets {
                 "$class": this.asset['fullNamespace'],
                 "padId": id
             }, arData)
+        }).then(result => {
+            return Object.assign(result, {padId: id});
         })
 
     }
@@ -56,6 +81,13 @@ class Pad extends Assets {
         if (typeof arData.participantsInvited === 'string') {
             arData.participantsInvited = [arData.participantsInvited];
         }
+
+        if (arData.text) {
+            arData.text = chainCrypto.encryptText(arData.text);
+            arData.cryptoAlgorithm = process.env.CHAINPAD_CRYPTO_ALGHORITM;
+            arData.crc = chainCrypto.crc(arData.text);
+        }
+
         return this.action({
             class: this.asset['fullNamespace'],
             transaction: this.asset['transactions']['updatePad']
@@ -65,6 +97,20 @@ class Pad extends Assets {
                 "$class": this.asset['fullNamespace'],
             }, arData)
         });
+    }
+
+    addFiles(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['addFiles']
+        }, Object.assign({"$class": this.asset['transactions']['addFiles']['fullNamespace']}, arData));
+    }
+
+    deleteFile(arData) {
+        return this.action({
+            class: this.asset['fullNamespace'],
+            transaction: this.asset['transactions']['deleteFile']
+        }, Object.assign({"$class": this.asset['transactions']['deleteFile']['fullNamespace']}, arData));
     }
 
     acceptPad(arData) {

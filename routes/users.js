@@ -1,13 +1,12 @@
 let express = require("express");
 let router = express.Router();
-let Ledger = require("../modules/ledger");
 let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
 
 /******************* ALL PARTICIPANTS ROUTES *******************/
-router.post("/", [middlewares.verifyToken, middlewares.onlyAdminAccess], function (req, res, next) {
+router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
 
-    return Ledger.init(req.user.networkCard)
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers().then(users => {
                 return res.json({success: true, items: users, user: req.user});
@@ -18,8 +17,8 @@ router.post("/", [middlewares.verifyToken, middlewares.onlyAdminAccess], functio
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
 });
-router.post("/me", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/me", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers(req.user.participantId).then(user => {
                 return res.json({success: true, item: user, user: req.user});
@@ -30,9 +29,9 @@ router.post("/me", middlewares.verifyToken, function (req, res, next) {
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
 });
-router.post("/new", [middlewares.verifyToken, middlewares.onlyAdminAccess], function (req, res, next) {
+router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
 
-    return Ledger.init(req.user.networkCard)
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
             data.phone = data.phone.replace(/[^0-9]/gim, '');
@@ -47,9 +46,9 @@ router.post("/new", [middlewares.verifyToken, middlewares.onlyAdminAccess], func
         });
 });
 
-router.post("/edit", middlewares.verifyToken, function (req, res, next) {
+router.post("/edit", function (req, res, next) {
 
-    return Ledger.init(req.user.networkCard)
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
             if(data.phone) {
@@ -68,8 +67,8 @@ router.post("/edit", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/search", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/search", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             req.body.query = req.body.query || '';
             return Ledger.User.searchInMongo({

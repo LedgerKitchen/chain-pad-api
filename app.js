@@ -2,6 +2,18 @@ let express = require('express');
 let logger = require('morgan');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
+let multer = require('multer');
+let middlewares = require('./modules/middlewares');
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+});
+let filesUpload = multer({storage: storage});
 
 let app = express();
 
@@ -10,14 +22,24 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+let onFinished = require('on-finished');
 
+app.use(function (req, res, next) {
+    onFinished(res, function () {
+        if (typeof  req.LedgerConnector !== 'undefined') {
+            req.LedgerConnector.close();
+        }
+    });
+    next();
+});
 
 /******************* ROUTES *******************/
 app.use('/', require('./routes/index'));
+app.use('/file', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/files'));
 app.use('/auth', require('./routes/auth'));
-app.use('/history', require('./routes/history'));//This only preview version
-app.use('/users', require('./routes/users'));
-app.use('/pads', require('./routes/pads'));
+app.use('/history', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/history'));//This only preview version
+app.use('/users', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/users'));
+app.use('/pads', [filesUpload.array('padFiles'), middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/pads'));
 /******************* END ROUTES *******************/
 
 /******************* CATCH ERRORS *******************/

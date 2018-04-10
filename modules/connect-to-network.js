@@ -46,6 +46,10 @@ class ConnectNetwork {
             })
     }
 
+    static closeNetwork(connect) {
+        return connect.disconnect();
+    }
+
     /* Prepare query to search */
     static prepareQuery(resource, data, logic = 'AND') {
         let filter = {},

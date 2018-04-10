@@ -38,14 +38,18 @@
               "name": "deletePad",
               "namespace": "org.chainpad.pad",
               "fullNamespace": "org.chainpad.pad.deletePad"
+            },
+            "addFiles": {
+              "name": "addFiles",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.addFiles"
+            },
+            "deleteFile": {
+              "name": "deleteFile",
+              "namespace": "org.chainpad.pad",
+              "fullNamespace": "org.chainpad.pad.deleteFile"
             }
           }
-        },
-        "media": {
-          "namespace": "org.chainpad.pad",
-          "class": "Media",
-          "fullNamespace": "org.chainpad.pad.Media",
-          "transactions": {}
         }
       },
       "participants": {

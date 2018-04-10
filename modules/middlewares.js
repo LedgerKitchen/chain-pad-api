@@ -1,6 +1,7 @@
 const JWT = require('./jwt');
 const log = require('./logger.js');
 const User = require('./repo/userRepository');
+const LC = require("./LedgerConnector");
 
 module.exports = {
     verifyToken: function (req, res, next) {
@@ -24,5 +25,9 @@ module.exports = {
         }
 
         return res.json({success: false, message: "Access denied (Only Admin).", httpErrorCode: 403});
+    },
+    createHLFConnection: function (req, res, next) {
+        req.LedgerConnector = new LC();
+        return next()
     }
 };

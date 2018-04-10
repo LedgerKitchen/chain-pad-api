@@ -1,14 +1,19 @@
 let express = require("express");
 let router = express.Router();
-let Ledger = require("../modules/ledger");
+let LC = require("../modules/LedgerConnector");
 let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
+let multer = require('multer');
+let upload = multer({dest: 'uploads/'});
+let IPFSRepository = require('../modules/repo/IPFSRepository');
+const IPFS = new IPFSRepository(process.env.IPFS_URL);
+
 
 /******************* PADS ROUTES *******************/
 ///pads/new
-router.post("/", middlewares.verifyToken, function (req, res, next) {
+router.post("/", function (req, res, next) {
 
-    return Ledger.init(req.user.networkCard)
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.Pad.getPads({
                 user: {
@@ -17,6 +22,7 @@ router.post("/", middlewares.verifyToken, function (req, res, next) {
                     role: req.user.role,
                 }
             }).then(pads => {
+
                 return res.json({success: true, items: pads, user: req.user});
             })
         }).catch((result) => {
@@ -25,12 +31,34 @@ router.post("/", middlewares.verifyToken, function (req, res, next) {
             return res.send({success: false, message: rUtils.parseErrorHLF(error)});
         });
 });
-router.post("/new", middlewares.verifyToken, function (req, res, next) {
 
-    return Ledger.init(req.user.networkCard)
+router.post("/new", function (req, res, next) {
+
+    let files = req.files || [];
+
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.Pad.createPad(Object.assign(req.body, {owner: req.user.participantId}))
                 .then((result) => {
+                    //Adding files IPFS
+                    if (files.length) {
+                        return IPFS.add(files, true).then(files => {
+                            return Ledger.Pad.addFiles({
+                                padId: result.padId,
+                                files: files
+                            }).then(result => {
+                                return res.json(result);
+                            });
+                        }).catch(error => {
+
+                            return res.json({
+                                success: true,
+                                message: "The pad has been created, but files won't be attached. Please try adding to files from update page.",
+                                fileError: rUtils.parseErrorHLF(error)
+                            });
+                        })
+                    }
+
                     return res.json(result);
                 })
         }).catch((result) => {
@@ -40,17 +68,41 @@ router.post("/new", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/edit", middlewares.verifyToken, function (req, res, next) {
+router.post("/edit", function (req, res, next) {
+    let data = req.body,
+        files = req.files || [];
 
-    return Ledger.init(req.user.networkCard)
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
-            if (!req.body.padId) {
+
+            if (!data.padId) {
                 throw new Error('Missing required field padId');
             }
-            return Ledger.Pad.updatePad(req.body)
+
+            return Ledger.Pad.updatePad(data)
                 .then((result) => {
+                    //Adding files IPFS
+                    if (files.length) {
+                        return IPFS.add(files, true).then(files => {
+                            return Ledger.Pad.addFiles({
+                                padId: data.padId,
+                                files: files
+                            }).then(result => {
+                                return res.json(result);
+                            });
+                        }).catch(error => {
+
+                            console.log(error);
+                            return res.json({
+                                success: true,
+                                message: "The pad has been updated, but files won't be attached. Please try again later.",
+                                fileError: rUtils.parseErrorHLF(error)
+                            });
+                        })
+                    }
+
                     return res.json(result);
-                });
+                })
         }).catch((result) => {
             let error = result.error || result.message;
 
@@ -58,8 +110,8 @@ router.post("/edit", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/detail", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/detail", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -73,6 +125,7 @@ router.post("/detail", middlewares.verifyToken, function (req, res, next) {
             }, {
                 padId: req.body.padId || false
             }).then(pad => {
+
                 return res.json({success: true, item: pad, user: req.user});
             })
         }).catch((result) => {
@@ -82,8 +135,8 @@ router.post("/detail", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/accept", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/accept", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -91,6 +144,7 @@ router.post("/accept", middlewares.verifyToken, function (req, res, next) {
             return Ledger.Pad.acceptPad({
                 padId: req.body.padId
             }).then(result => {
+
                 return res.json(result);
             })
         }).catch((result) => {
@@ -100,8 +154,8 @@ router.post("/accept", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/decline", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/decline", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -109,6 +163,7 @@ router.post("/decline", middlewares.verifyToken, function (req, res, next) {
             return Ledger.Pad.declinePad({
                 padId: req.body.padId
             }).then(result => {
+
                 return res.json(result);
             })
         }).catch((result) => {
@@ -118,8 +173,8 @@ router.post("/decline", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/publish", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/publish", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -127,6 +182,7 @@ router.post("/publish", middlewares.verifyToken, function (req, res, next) {
             return Ledger.Pad.publishPad({
                 padId: req.body.padId
             }).then(result => {
+
                 return res.json(result);
             })
         }).catch((result) => {
@@ -136,8 +192,8 @@ router.post("/publish", middlewares.verifyToken, function (req, res, next) {
         });
 });
 
-router.post("/delete", middlewares.verifyToken, function (req, res, next) {
-    return Ledger.init(req.user.networkCard)
+router.post("/delete", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -145,6 +201,7 @@ router.post("/delete", middlewares.verifyToken, function (req, res, next) {
             return Ledger.Pad.deletePad({
                 padId: req.body.padId
             }).then(result => {
+
                 return res.json(result);
             })
         }).catch((result) => {

@@ -29,6 +29,7 @@ class History {
             networkDefinition = networkConnection.businessNetwork;
             //WHERE (identityUsed CONTAINS (name == _$participantName))
             let query = networkConnection.buildQuery('SELECT org.hyperledger.composer.system.HistorianRecord WHERE (participantInvoking == _$participantName)');
+
             return networkConnection.query(query, {participantName: 'resource:org.chainpad.user.User#' + networkConnection.getCard().getUserName()});
         }).then((result) => {
 

@@ -23,7 +23,7 @@ exports.send = (phone, text) => {
             action: "sendsms",
             user: process.env.SMS_USER,
             password: process.env.SMS_PASSWORD,
-            from:  process.env.SMS_FROM,
+            from: process.env.SMS_FROM,
             to: phone,
             text: "You activation code: " + text,
             //maxsplit: "",

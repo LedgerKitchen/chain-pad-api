@@ -1,6 +1,5 @@
 let express = require('express');
 const router = express.Router();
-let Ledger = require("../modules/ledger");
 let rUtils = require("../modules/rUtils");
 let JWT = require("../modules/jwt");
 let log = require("../modules/logger");
@@ -54,7 +53,7 @@ router.post('/sign-in', function (req, res, next) {
 
                     return res.json({user: result.user, success: true, token: jwtToken});
                 } else {
-                    return Ledger.init(require('config').get('chain-pad')['card'])
+                    return req.LedgerConnector.init(require('config').get('chain-pad')['card'])
                         .then((Ledger) => {
                             return Ledger.User.createUser(data)
                                 .then((result) => {
