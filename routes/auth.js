@@ -3,6 +3,7 @@ const router = express.Router();
 let rUtils = require("../modules/rUtils");
 let JWT = require("../modules/jwt");
 let log = require("../modules/logger");
+let middlewares = require("../modules/middlewares");
 const User = require("../modules/repo/userRepository");
 const SMS = require("../modules/repo/smsCodeRepository");
 
@@ -39,7 +40,7 @@ router.post('/send-sms', function (req, res, next) {
         })
 });
 
-router.post('/sign-in', function (req, res, next) {
+router.post('/sign-in', middlewares.createHLFConnection, function (req, res, next) {
     let jwtToken;
     let data = req.body;
     data.phone = data.phone.replace(/[^0-9]/gim, '');
