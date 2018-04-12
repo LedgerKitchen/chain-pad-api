@@ -34,7 +34,7 @@ router.all('/get', function (req, res, next) {
     })
 });
 
-router.post('/delete/:padId/:hash', function (req, res, next) {
+router.post('/delete', function (req, res, next) {
 
     return IPFS.delete(req.body.hash, req.body.name).then(() => {
 
