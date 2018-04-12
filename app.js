@@ -35,11 +35,12 @@ app.use(function (req, res, next) {
 
 /******************* ROUTES *******************/
 app.use('/', require('./routes/index'));
-app.use('/file', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/files'));
+
 app.use('/auth', require('./routes/auth'));
 app.use('/history', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/history'));//This only preview version
 app.use('/users', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/users'));
 app.use('/pads', [filesUpload.array('padFiles'), middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/pads'));
+app.use('/pads/file', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/files'));
 /******************* END ROUTES *******************/
 
 /******************* CATCH ERRORS *******************/

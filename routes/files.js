@@ -10,8 +10,9 @@ const mime = require('mime-types');
 let fs = require('fs');
 /************** Authenticate users **************/
 
-router.all('/get/:padId/:hash', function (req, res, next) {
-    return IPFS.get(req.params.hash).then(file => {
+router.all('/get', function (req, res, next) {
+
+    return IPFS.get(req.body.hash).then(file => {
         let ft = fileType(file);
         let result = {};
 
@@ -21,35 +22,34 @@ router.all('/get/:padId/:hash', function (req, res, next) {
                 contentType: mime.lookup(ft.ext),
                 fileExtension: ft.ext,
                 file: file,
-                id: req.params.hash
+                hash: req.body.hash
             };
         else
-            result = {success: false, message: "File can not be read"};
+            result = {success: false, message: "File cannot be read"};
 
         return res.send(result);
     }).catch(_ => {
 
-        res.send({success: false, message: "File can not be read"});
+        res.send({success: false, message: "File cannot be read"});
     })
 });
 
 router.post('/delete/:padId/:hash', function (req, res, next) {
 
-    return IPFS.delete(req.params.hash, req.body.name).then(() => {
+    return IPFS.delete(req.body.hash, req.body.name).then(() => {
 
         return req.LedgerConnector.init(req.user.networkCard).then(Ledger => {
             return Ledger.Pad.deleteFile({
-                padId: req.params.padId,
-                fileDeleteHash: req.params.hash
+                padId: req.body.padId,
+                fileDeleteHash: req.body.hash
             }).then(() => {
-                return res.send({success: true, message: 'file delete'});
+                return res.send({success: true});
             })
 
         })
 
     }).catch(error => {
-        console.log(error);
-        res.send({success: false, message: "File can not be delete"});
+        res.send({success: false, message: error.toString()});
     })
 });
 

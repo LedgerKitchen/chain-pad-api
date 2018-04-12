@@ -12,7 +12,7 @@ Example of an error response
     "message": "Incorrect Email or Password"
 }
 ```
-#### 1. Отрпавка SMS кода для авторизации
+#### 1. Send SMS Auth code
 ---
 Send `POST` request to the address `/auth/send-sms` 
 
@@ -55,9 +55,12 @@ Send `POST` request to the address`/pads/new`
 ##### List of fields in the query
 * name - Name
 * text - Content (Can include html)
-* participantsInvited - invited participants, a multiple field, that would pass several simply to specify in the request one more field with the same name
-* participantsInvited - the second participant if there are, participants not limited number.
+* membersInvited - invited members, a multi-field, that would pass a few simply to specify in the request one more field with the same name
+* membersInvited - the second participant, if any, the participants are not limited to the number.
 * token
+* geo - an array of two fields {latitude, longitude}
+* textType - default = "plain-text" Content type
+* files [] - A file or one file passed as multipart / form-data
 
 In response, we get json with success or failure.
 
@@ -67,12 +70,14 @@ In response, we get json with success or failure.
 Send `POST` request to the address `/pads/edit`
 
 ##### List of fields in the query
-* padId - id Pad
 * name - Name
 * text - Content (Can include html)
-* participantsInvited - invited participants, a multiple field, that would pass several simply to specify in the request one more field with the same name
-* participantsInvited - the second participant if there are, participants not limited number.
+* membersInvited - invited members, a multi-field, that would pass a few simply to specify in the request one more field with the same name
+* membersInvited - the second participant, if any, the participants are not limited to the number.
 * token
+* geo - an array of two fields {latitude, longitude}
+* textType - default = "plain-text" Content type
+* files [] - A file or one file passed as multipart / form-data
 
 In response, we get json with success or failure.
 
@@ -87,46 +92,63 @@ In response, we get json c Pad and the current user.
 
 ```json
 {
+    "success": true,
     "item": {
         "$class": "org.chainpad.pad.Pad",
-        "padId": "84b105e6dea242189e47270f9d303d62f00b2906bc9f89c96a494728959f0448",
-        "name": "New Test Pad 2",
-        "text": "Text for a new test pad",
-        "dateCreate": "2018-03-01T12:44:40.672Z",
-        "dateUpdate": "2018-03-02T11:38:02.422Z",
-        "status": "NEW",
-        "owner": "resource:org.chainpad.user.User#admin",
-        "participantsInvited": [
+        "padId": "55c43d6b74dd27252176265e792053467f4ee7fde3588cd6591414ec7bd14ee8",
+        "name": "Test Pad 2018.12.04",
+        "text": "Text -&gt; Test Pad 2018.12.04<br>",
+        "textType": "plain-text",
+        "dateCreate": "2018-04-12T09:40:01.304Z",
+        "dateCreateTimestamp": 1523526001304,
+        "dateUpdate": "2018-04-12T09:40:04.476Z",
+        "status": "DRAFT",
+        "owner": {
+            "$class": "org.chainpad.user.User",
+            "userId": "79819469906",
+            "phone": "79819469906",
+            "role": "PARTICIPANT"
+        },
+        "participantsInvited": [],
+        "participantsAccepted": [],
+        "participantsDeclined": [],
+        "cryptoAlgorithm": "aes-256-ctr",
+        "files": [
             {
-                "$class": "org.chainpad.user.User",
-                "userId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33",
-                "name": "Den",
-                "lastName": "Sadon",
-                "email": "test@test.com",
-                "phone": "+1 (111) 111-1111",
-                "role": "PARTICIPANT"
+                "$class": "org.chainpad.pad.File",
+                "hash": "Qmc3AH98CMmqoQfXMyFP3HvPYjw3H5SKUPZuvo1xpME3Pc",
+                "name": "ac5e27f9c321aaa7a14e92a7bb7bdc68.jpg",
+                "size": 105353,
+                "mime": "image/jpeg",
+                "extension": "jpg",
+                "cryptoAlgorithm": "aes-256-ctr",
+                "crc": "baf211fad47bedd91c952a88b36b94a5a7fa33ebf56101740e72acfe797e948d",
+                "dateCreate": "2018-04-12T09:37:16.552Z",
+                "dateCreateTimestamp": 1523525836552
             },
             {
-                "$class": "org.chainpad.user.User",
-                "userId": "025fd92559a26791cdc74c59b2a69e6bb804fbbde92f5d98b2c108746ba327ce",
-                "name": "Yako",
-                "lastName": "Vorov",
-                "email": "1test@test.com",
-                "phone": "+2 (222) 222-2222",
-                "role": "PARTICIPANT"
+                "$class": "org.chainpad.pad.File",
+                "hash": "QmYYmJxrqQhueFGCefemLa1bqx54Wm2Ty63G7wqys68XMP",
+                "name": "2017-06-12 22.17.31.jpg",
+                "size": 275862,
+                "mime": "image/jpeg",
+                "extension": "jpg",
+                "cryptoAlgorithm": "aes-256-ctr",
+                "crc": "cacd0ef095b00247b1620870a874b837d425cf861ee1d0c934b80eb9f7254a87",
+                "dateCreate": "2018-04-12T09:37:16.552Z",
+                "dateCreateTimestamp": 1523525836552
             }
-        ]
+        ],
+        "crc": "73ace2967925f999e05f916e540f35cc8834f98131a7a09fed0ccda29ac578b3"
     },
     "user": {
         "role": "PARTICIPANT",
-        "_id": "5a93d7ccf2d67a1d9705822b",
-        "name": "Den",
-        "lastName": "Sadon",
-        "email": "test@test.com",
-        "phone": "+1 (111) 111-1111",
-        "password": "<--SECURITY_FIELD-->",
-        "networkCard": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33@chainpad-network"
-     }
+        "_id": "5ac243d20da5683b4b36973f",
+        "phone": "79819469906",
+        "networkCard": "79819469906@chainpad-network",
+        "__v": 0,
+        "participantId": "79819469906"
+    }
 }
 ```
 
@@ -161,40 +183,51 @@ In response, we get json c Pads and the current user.
     "items": [
         {
             "$class": "org.chainpad.pad.Pad",
-            "padId": "cd023ef3f03494646ac3d3a7eea9288ad108eb8a393b95fb887526c643abd4b3",
-            "name": "New Test Pad",
-            "text": "Text for a new test pad",
-            "dateCreate": "2018-03-02T11:45:53.912Z",
-            "status": "NEW",
+            "padId": "55c43d6b74dd27252176265e792053467f4ee7fde3588cd6591414ec7bd14ee8",
+            "name": "Test Pad 2018.12.04",
+            "text": "Text -&gt; Test Pad 2018.12.04<br>",
+            "textType": "plain-text",
+            "dateCreate": "2018-04-12T09:40:01.304Z",
+            "dateCreateTimestamp": 1523526001304,
+            "dateUpdate": "2018-04-12T09:40:04.476Z",
+            "status": "DRAFT",
             "owner": {
                 "$class": "org.chainpad.user.User",
-                "userId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33",
-                "name": "Den",
-                "lastName": "Sadon",
-                "email": "test@test.com",
-                "phone": "+1 (111) 111-1111",
+                "userId": "79819469906",
+                "phone": "79819469906",
                 "role": "PARTICIPANT"
             },
-            "participantsInvited": [
+            "participantsInvited": [],
+            "participantsAccepted": [],
+            "participantsDeclined": [],
+            "cryptoAlgorithm": "aes-256-ctr",
+            "files": [
                 {
-                    "$class": "org.chainpad.user.User",
-                    "userId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33",
-                    "name": "Den",
-                    "lastName": "Sadon",
-                    "email": "test@test.com",
-                    "phone": "+1 (111) 111-1111",
-                    "role": "PARTICIPANT"
+                    "$class": "org.chainpad.pad.File",
+                    "hash": "Qmc3AH98CMmqoQfXMyFP3HvPYjw3H5SKUPZuvo1xpME3Pc",
+                    "name": "ac5e27f9c321aaa7a14e92a7bb7bdc68.jpg",
+                    "size": 105353,
+                    "mime": "image/jpeg",
+                    "extension": "jpg",
+                    "cryptoAlgorithm": "aes-256-ctr",
+                    "crc": "baf211fad47bedd91c952a88b36b94a5a7fa33ebf56101740e72acfe797e948d",
+                    "dateCreate": "2018-04-12T09:37:16.552Z",
+                    "dateCreateTimestamp": 1523525836552
                 },
                 {
-                    "$class": "org.chainpad.user.User",
-                    "userId": "025fd92559a26791cdc74c59b2a69e6bb804fbbde92f5d98b2c108746ba327ce",
-                    "name": "Yako",
-                    "lastName": "Vorov",
-                    "email": "1test@test.com",
-                    "phone": "+2 (222) 222-2222",
-                    "role": "PARTICIPANT"
+                    "$class": "org.chainpad.pad.File",
+                    "hash": "QmYYmJxrqQhueFGCefemLa1bqx54Wm2Ty63G7wqys68XMP",
+                    "name": "2017-06-12 22.17.31.jpg",
+                    "size": 275862,
+                    "mime": "image/jpeg",
+                    "extension": "jpg",
+                    "cryptoAlgorithm": "aes-256-ctr",
+                    "crc": "cacd0ef095b00247b1620870a874b837d425cf861ee1d0c934b80eb9f7254a87",
+                    "dateCreate": "2018-04-12T09:37:16.552Z",
+                    "dateCreateTimestamp": 1523525836552
                 }
-            ]
+            ],
+            "crc": "73ace2967925f999e05f916e540f35cc8834f98131a7a09fed0ccda29ac578b3"
         }
     ],
     "user": {
@@ -226,27 +259,21 @@ In response, we get json c Pads and the current user.
 ```json
 [
     {
-        "role": "PARTICIPANT",
-        "_id": "5a93d7ccf2d67a1d9705822b",
-        "name": "Den",
-        "lastName": "Sadon",
-        "email": "test@test.com",
-        "phone": "+1 (111) 111-1111",
-        "networkCard": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33@chainpad-network",
-        "__v": 0,
-        "participantId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33"
-    },
+            "role": "PARTICIPANT",
+            "_id": "5ac243d20da5683b4b36975f",
+            "phone": "79819469916",
+            "networkCard": "79819469916@chainpad-network",
+            "__v": 0,
+            "participantId": "79819469916"
+        },
     {
-        "role": "PARTICIPANT",
-        "_id": "5a97e0a75dd80c73a94b6513",
-        "name": "sadon",
-        "lastName": "sadon",
-        "email": "111sadonsergey@gmail.com",
-        "phone": "798194699061111",
-        "networkCard": "b30e714d19c42bec8fd0fb43fd015bd40769eb61a102758bdf988e8a4807f082@chainpad-network",
-        "__v": 0,
-        "participantId": "b30e714d19c42bec8fd0fb43fd015bd40769eb61a102758bdf988e8a4807f082"
-    }
+            "role": "PARTICIPANT",
+            "_id": "5ac243d20da5683b4b36973f",
+            "phone": "79819469926",
+            "networkCard": "79819469926@chainpad-network",
+            "__v": 0,
+            "participantId": "79819469926"
+        }
 ]
 ```
 
@@ -272,8 +299,42 @@ Send `POST` request to the address `/users/edit`
 ##### List of fields in the query
 * token - required
 * userId - required, here user phone number (only numbers 79999999999)
-* name -
-* lastName - 
-* email - 
-* phone - 
+* name - Naem
+* lastName -  Last Name
+* email - email 
 * role  - PARTICIPANT or ADMIN
+
+#### 11. Get the file
+
+
+Send `POST` request to the address `/pads/file/get`
+
+##### List of fields in the query
+* token - required
+* padId - pad id
+* hash - hash file
+
+In response, we get a json file.
+
+```json
+{
+     "success": true,
+     "contentType": "image/jpeg",
+     "fileExtension": "jpg",
+     "file": {
+         "type": "Buffer",
+         "data": ["<here bufer data>"]
+       },
+     "hash": "QmYYmJxrqQhueFGCefemLa1bqx54Wm2Ty63G7wqys68XMP"
+     }
+```
+
+#### 12. Delete the file
+Send `POST` request to the address `/pads/file/delete`
+
+##### List of fields in the query
+* token - required
+* padId - pad id
+* hash - hash file
+
+In response, we get json with success or failure.
