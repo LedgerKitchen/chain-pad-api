@@ -11,7 +11,6 @@ let fs = require('fs');
 /************** Authenticate users **************/
 
 router.all('/get', function (req, res, next) {
-
     return IPFS.get(req.body.hash).then(file => {
         let ft = fileType(file);
         let result = {};
@@ -21,11 +20,13 @@ router.all('/get', function (req, res, next) {
                 success: true,
                 contentType: mime.lookup(ft.ext),
                 fileExtension: ft.ext,
-                file: file,
+                file: file.toString('base64'),
                 hash: req.body.hash
             };
         else
             result = {success: false, message: "File cannot be read"};
+
+        console.log(result);
 
         return res.send(result);
     }).catch(_ => {
