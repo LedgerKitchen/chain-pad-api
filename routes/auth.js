@@ -15,12 +15,17 @@ router.post('/send-sms', function (req, res, next) {
     data.phone = data.phone.replace(/[^0-9]/gim, '');
     return SMS.add(data.phone)
         .then(code => {
+
+            if (data.phone.substring(0, 4) === '7000' && process.env.DEBUG) {
+                return res.json({success: true, code: code})
+            }
+
             log.info('Code has been sent -> ' + code);
             return SMS.send(req.body.phone, code).then((SMSSend) => {
                 if (SMSSend.success) {
-                    if (process.env.DEBUG) {
-                        return res.json({success: true, code: code});
-                    }
+                    // if (process.env.DEBUG) {
+                    //     return res.json({success: true, code: code});
+                    // }
                     return res.json({success: true});
                 } else {
                     return SMS.remove(data.phone).then(() => {

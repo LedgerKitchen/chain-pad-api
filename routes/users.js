@@ -51,9 +51,9 @@ router.post("/edit", function (req, res, next) {
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
-            if(data.phone) {
+            if (data.phone) {
                 data.phone = data.phone.replace(/[^0-9]/gim, '');
-            }else{
+            } else {
                 data.phone = data.userId;
             }
             return Ledger.User.updateUser(data)
@@ -73,10 +73,7 @@ router.post("/search", function (req, res, next) {
             req.body.query = req.body.query || '';
             return Ledger.User.searchInMongo({
                 $or: [
-                    //{name: new RegExp('.*' + req.body.query + '.*', "i")},
-                    //{lastName: new RegExp('.*' + req.body.query + '.*', "i")},
                     {phone: new RegExp('.*' + req.body.query.replace(/[^0-9]/gim, '') + '.*', "i")},
-                    //{email: new RegExp('.*' + req.body.query + '.*', "i")}
                 ],
                 $and: [{
                     role: {$eq: 'PARTICIPANT'},
@@ -84,6 +81,44 @@ router.post("/search", function (req, res, next) {
                 }]
             }).then((result) => {
                 return res.json({success: true, items: result});
+            });
+        }).catch((result) => {
+            let error = result.error || result.message;
+
+            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+        });
+});
+
+router.post("/checkExistsByPhone", function (req, res, next) {
+    return req.LedgerConnector.init(req.user.networkCard)
+        .then((Ledger) => {
+
+            let phones = req.body.phone || [''];
+
+            return Ledger.User.searchInMongo({
+                $or: [
+                    {
+                        phone: {
+                            $in: phones.map(function (item) {
+                                return item.replace(/[^0-9]/gim, '');
+                            })
+                        }
+                    },
+                ],
+                $and: [{
+                    role: {$eq: 'PARTICIPANT'}
+                }]
+            }).then((result) => {
+                return res.json({
+                    success: true, users: result.map(item => {
+                        delete item['_id'];
+                        delete item['role'];
+                        delete item['networkCard'];
+                        delete item['__v'];
+
+                        return item;
+                    })
+                });
             });
         }).catch((result) => {
             let error = result.error || result.message;

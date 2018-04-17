@@ -1,6 +1,7 @@
 {
   "chain-pad": {
     "card": "admin@chainpad-network",
+    "network-name":"chainpad-network",
     "architecture": {
       "namespace": "org.chainpad",
       "assets": {

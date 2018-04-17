@@ -335,3 +335,32 @@ Send `POST` request to the address `/pads/file/delete`
 * hash - hash file
 
 In response, we get json with success or failure.
+
+#### 13. Multiple Search by Phone Numbers
+
+Send `POST` request to the address `/users/checkExistsByPhone`
+
+##### List of fields in the query
+* token
+* telephone - an array with a telephone or several telephones ["70000000000", "70000111212122"]
+
+In response, we get json c to users who exist in the network block.
+
+`` `JSON
+{
+    "Success": true,
+    "Users": [
+        {
+            "Telephone": "70003333333",
+            "memberId": "70003333333"
+        },
+        {
+            "Telephone": "79819469906",
+            "Email": "sadonsergey@gmail.com", "
+            "LastName": "Saddd",
+            «Name»: «Test»,
+            "memberId": "79819469906"
+        }
+    ]
+}
+`` `

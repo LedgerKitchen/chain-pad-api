@@ -102,7 +102,7 @@ class User extends Participants {
     }
 
     static updateUserMongo(id, userData) {
-        return UserMongo.findOne({phone: id}).then(user => {
+        return UserMongo.findOne({networkCard: id}).then(user => {
 
             if (userData.name) {
                 user.name = userData.name;
@@ -128,7 +128,11 @@ class User extends Participants {
     }
 
     createUser(arData) {
-        const id = arData.phone;
+        //const id = arData.phone;
+        let date, id;
+        date = new Date();
+        id = SHA256(JSON.stringify(arData) + date.toJSON()).toString();
+
         return UserMongo.findOne({phone: arData.phone})
             .then(userMongo => {
 
@@ -184,7 +188,7 @@ class User extends Participants {
                 "$class": this.participant['fullNamespace'],
             }, arData)
         }).then(user => {
-            return User.updateUserMongo(user.data.userId, user.data).then(user => Object.assign({}, {
+            return User.updateUserMongo(user.data.userId + '@' + config['network-name'], user.data).then(user => Object.assign({}, {
                 success: true,
                 user: user
             }));
