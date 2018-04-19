@@ -2,6 +2,8 @@ let express = require("express");
 let router = express.Router();
 let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
+let QRCode = require('qrcode');
+
 
 /******************* ALL PARTICIPANTS ROUTES *******************/
 router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
@@ -21,7 +23,9 @@ router.post("/me", function (req, res, next) {
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers(req.user.participantId).then(user => {
-                return res.json({success: true, item: user, user: req.user});
+                QRCode.toDataURL(req.user.participantId).then(qrCode => {
+                    return res.json({success: true, item: user, user: req.user, qrCode: qrCode});
+                });
             })
         }).catch((result) => {
             let error = result.error || result.message;
