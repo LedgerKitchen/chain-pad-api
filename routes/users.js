@@ -3,7 +3,7 @@ let router = express.Router();
 let rUtils = require("../modules/rUtils");
 let middlewares = require('../modules/middlewares');
 let QRCode = require('qrcode');
-
+const config = require('config').get('chain-pad');
 
 /******************* ALL PARTICIPANTS ROUTES *******************/
 router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
@@ -74,17 +74,34 @@ router.post("/edit", function (req, res, next) {
 router.post("/search", function (req, res, next) {
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
-            req.body.query = req.body.query || '';
+            let query = req.body.query || '', searchObject = {};
+
+            switch (req.body.field || 'phone') {
+                case 'id':
+                    searchObject = {networkCard: {$eq: query + '@' + config['network-name']}};
+                    break;
+                default:
+                case 'phone':
+                    searchObject = {phone: new RegExp('.*' + query.replace(/[^0-9]/gim, '') + '.*', "i")};
+                    break
+            }
+
             return Ledger.User.searchInMongo({
-                $or: [
-                    {phone: new RegExp('.*' + req.body.query.replace(/[^0-9]/gim, '') + '.*', "i")},
-                ],
-                $and: [{
+                $and: [Object.assign({
                     role: {$eq: 'PARTICIPANT'},
                     networkCard: {$ne: req.user.networkCard}
-                }]
+                }, searchObject)]
             }).then((result) => {
-                return res.json({success: true, items: result});
+                if (result.length) {
+                    delete result[0]['_id'];
+                    delete result[0]['role'];
+                    delete result[0]['networkCard'];
+                    delete result[0]['__v'];
+
+                    return res.json({success: true, user: result[0]});
+                }
+
+                return res.json({success: false, message: 'User not found'});
             });
         }).catch((result) => {
             let error = result.error || result.message;

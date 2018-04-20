@@ -28,7 +28,7 @@ class LedgerConnector extends EventEmitter {
                                 serializer = networkDefinition.getSerializer(),
                                 arEvent = serializer.toJSON(event);
 
-                            console.log(arEvent);
+                            //console.log(arEvent);
 
                             return arEvent;
                         }).then(function (arEvent) {

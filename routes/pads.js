@@ -92,7 +92,6 @@ router.post("/edit", function (req, res, next) {
                             });
                         }).catch(error => {
 
-                            console.log(error);
                             return res.json({
                                 success: true,
                                 message: "The pad has been updated, but files won't be attached. Please try again later.",

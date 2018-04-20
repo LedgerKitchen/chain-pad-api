@@ -41,6 +41,7 @@ app.use('/history', [middlewares.verifyToken, middlewares.createHLFConnection], 
 app.use('/users', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/users'));
 app.use('/pads', [filesUpload.array('padFiles'), middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/pads'));
 app.use('/pads/file', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/files'));
+app.use('/pads/geo', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/geo'));
 /******************* END ROUTES *******************/
 
 /******************* CATCH ERRORS *******************/

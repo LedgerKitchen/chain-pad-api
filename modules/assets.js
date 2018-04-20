@@ -68,6 +68,7 @@ class Assets {
                 factory = networkDefinition.getFactory(),
                 serializer = networkDefinition.getSerializer();
             return networkConnection.getAssetRegistry(resource.class).then(() => {
+
                 return networkConnection.submitTransaction(Object.assign(factory.newTransaction(resource.transaction.namespace, resource.transaction.name), serializer.fromJSON(data)));
             }).then(() => {
                 return {success: true}

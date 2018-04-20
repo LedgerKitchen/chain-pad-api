@@ -26,8 +26,6 @@ router.all('/get', function (req, res, next) {
         else
             result = {success: false, message: "File cannot be read"};
 
-        console.log(result);
-
         return res.send(result);
     }).catch(_ => {
 
