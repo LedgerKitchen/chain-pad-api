@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 module.exports = {
     ucFirst: function (string) {
@@ -45,7 +46,7 @@ module.exports = {
                     arString = error.split('[Error:');
                 } else if (error.indexOf('[AccessException:') > -1) {
                     arString = error.split('[AccessException:');
-                }else if (error.indexOf('failure:') > -1) {
+                } else if (error.indexOf('failure:') > -1) {
                     arString = error.split('failure:');
                 }
 
@@ -101,5 +102,25 @@ module.exports = {
             } while (firstClose > firstOpen);
             firstOpen = str.indexOf(']', firstOpen + 1);
         } while (firstOpen !== -1);
+    },
+    getAddressByPoints: function (data) {
+
+        if (!data.latitude || !data.longitude) {
+            throw "Coordinates weren't set, please set their.";
+        }
+
+        return  axios({
+            url: "https://maps.googleapis.com/maps/api/geocode/json?key=" + process.env.GOOGLE_KEY + "&latlng=" + [data.latitude, data.longitude].join(','),
+            method: "get",
+            responseType: 'json',
+        }).then(response => {
+
+            let address;
+            address = response.data.results.filter(function (item) {
+                return item.types.indexOf('street_address') > -1;
+            });
+
+            return address[0] || null;
+        })
     }
 };

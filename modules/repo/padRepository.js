@@ -6,6 +6,7 @@ const SHA256 = require("crypto-js/sha256");
 const crypto = require('crypto');
 const ipfsAPI = require('ipfs-api');
 let chainCrypto = require('../chainCrypto');
+const rUtils = require('../rUtils');
 
 class Pad extends Assets {
 
@@ -47,7 +48,7 @@ class Pad extends Assets {
         });
     }
 
-    createPad(arData) {
+    async createPad(arData) {
         let date, id;
         date = new Date();
         id = SHA256(JSON.stringify(arData) + date.toJSON()).toString();
@@ -60,6 +61,12 @@ class Pad extends Assets {
             arData.text = chainCrypto.encryptText(arData.text);
             arData.cryptoAlgorithm = process.env.CHAINPAD_CRYPTO_ALGHORITM;
             arData.crc = chainCrypto.crc(arData.text);
+        }
+
+        if (typeof arData.geo !== 'undefined' && typeof arData.geo.address === 'undefined') {
+            await rUtils.getAddressByPoints(arData.geo).then(addr => {
+                arData.geo.address = addr.formatted_address;
+            });
         }
 
         return this.action({
@@ -77,7 +84,7 @@ class Pad extends Assets {
 
     }
 
-    updatePad(arData) {
+    async updatePad(arData) {
         if (typeof arData.participantsInvited === 'string') {
             arData.participantsInvited = [arData.participantsInvited];
         }
@@ -86,6 +93,12 @@ class Pad extends Assets {
             arData.text = chainCrypto.encryptText(arData.text);
             arData.cryptoAlgorithm = process.env.CHAINPAD_CRYPTO_ALGHORITM;
             arData.crc = chainCrypto.crc(arData.text);
+        }
+
+        if (typeof arData.geo !== 'undefined' && typeof arData.geo.address === 'undefined') {
+            await rUtils.getAddressByPoints(arData.geo).then(addr => {
+                arData.geo.address = addr.formatted_address;
+            });
         }
 
         return this.action({
