@@ -88,8 +88,7 @@ router.post("/search", function (req, res, next) {
 
             return Ledger.User.searchInMongo({
                 $and: [Object.assign({
-                    role: {$eq: 'PARTICIPANT'},
-                    networkCard: {$ne: req.user.networkCard}
+                    role: {$eq: 'PARTICIPANT'}
                 }, searchObject)]
             }).then((result) => {
                 if (result.length) {
