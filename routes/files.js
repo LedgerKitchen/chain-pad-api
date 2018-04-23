@@ -33,6 +33,17 @@ router.all('/get', function (req, res, next) {
     })
 });
 
+router.all('/getFile', function (req, res, next) {
+    let hash = req.query.hash || req.body.hash;
+    return IPFS.get(hash).then(file => {
+        let ft = fileType(file);
+        res.header("Content-Type", mime.lookup(ft.ext));
+        res.send(new Buffer(file));
+    }).catch(_ => {
+        res.send({success: false, message: "File cannot be read"});
+    })
+});
+
 router.post('/delete', function (req, res, next) {
 
     return IPFS.delete(req.body.hash, req.body.name).then(() => {
