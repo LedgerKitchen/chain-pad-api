@@ -36,7 +36,7 @@ router.all('/get', function (req, res, next) {
 router.all('/getFile', function (req, res, next) {
     let hash = req.query.hash || req.body.hash;
     return IPFS.get(hash).then(file => {
-        let ft = fileType(file);
+        let ft = fileType(file) || {ext:'text/plain'};
         res.header("Content-Type", mime.lookup(ft.ext));
         res.send(new Buffer(file));
     }).catch(_ => {
