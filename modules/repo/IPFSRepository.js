@@ -17,13 +17,8 @@ class IpfsFile {
             ft;
 
         for (let i in arFiles) {
-
             content = fs.readFileSync(arFiles[i].path);
-            ft = fileType(content);
-            if (ft === null) {
-                ft = {ext: arFiles[i].mimetype || 'text/plain'};
-            }
-
+            ft = fileType(content) || {ext: arFiles[i].mimetype || 'text/plain'};
 
             tmpFiles[arFiles[i].originalname] = {
                 name: arFiles[i].originalname,
@@ -32,6 +27,7 @@ class IpfsFile {
                 cryptoAlgorithm: process.env.CHAINPAD_CRYPTO_ALGHORITM,
                 crc: chainCrypto.crc(content)
             };
+
             files.push({content: chainCrypto.encryptBuffer(content), path: arFiles[i].originalname});
         }
 
