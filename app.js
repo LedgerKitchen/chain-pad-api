@@ -18,7 +18,7 @@ let filesUpload = multer({storage: storage});
 let app = express();
 
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false, limit: '100mb'}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 

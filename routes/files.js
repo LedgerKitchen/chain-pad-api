@@ -12,7 +12,7 @@ let fs = require('fs');
 
 router.all('/get', function (req, res, next) {
     return IPFS.get(req.body.hash).then(file => {
-        let ft = fileType(file);
+        let ft = fileType(file) || {ext:'text/plain'};
         let result = {};
 
         if (ft !== null)

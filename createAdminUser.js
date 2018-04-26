@@ -6,7 +6,7 @@ let data = {
     name: 'Admin',
     lastName: 'Adminov',
     email: 'admin@chain-pad.com',
-    phone: '79999999999',
+    phone: '70009999999',
     networkCard: process.env.CARD,
     role: 'ADMIN'
 };

@@ -20,6 +20,10 @@ class IpfsFile {
 
             content = fs.readFileSync(arFiles[i].path);
             ft = fileType(content);
+            if (ft === null) {
+                ft = {ext: arFiles[i].mimetype || 'text/plain'};
+            }
+
 
             tmpFiles[arFiles[i].originalname] = {
                 name: arFiles[i].originalname,
