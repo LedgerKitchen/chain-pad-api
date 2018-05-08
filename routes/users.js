@@ -22,8 +22,8 @@ router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
 router.post("/me", function (req, res, next) {
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
-            return Ledger.User.getAllUsers(req.user.participantId).then(user => {
-                QRCode.toDataURL(req.user.participantId).then(qrCode => {
+            return Ledger.User.getAllUsers(req.user.userId).then(user => {
+                QRCode.toDataURL(req.user.userId).then(qrCode => {
                     return res.json({success: true, item: user, user: req.user, qrCode: qrCode});
                 });
             })
@@ -57,9 +57,8 @@ router.post("/edit", function (req, res, next) {
             let data = req.body;
             if (data.phone) {
                 data.phone = data.phone.replace(/[^0-9]/gim, '');
-            } else {
-                data.phone = data.userId;
             }
+
             return Ledger.User.updateUser(data)
                 .then((result) => {
                     return res.json(result);
@@ -93,10 +92,7 @@ router.post("/search", function (req, res, next) {
             }).then((result) => {
                 if (result.length) {
                     delete result[0]['_id'];
-                    delete result[0]['role'];
-                    delete result[0]['networkCard'];
                     delete result[0]['__v'];
-
                     return res.json({success: true, user: result[0]});
                 }
 
@@ -132,8 +128,6 @@ router.post("/checkExistsByPhone", function (req, res, next) {
                 return res.json({
                     success: true, users: result.map(item => {
                         delete item['_id'];
-                        delete item['role'];
-                        delete item['networkCard'];
                         delete item['__v'];
 
                         return item;

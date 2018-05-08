@@ -18,11 +18,10 @@ router.post("/", function (req, res, next) {
             return Ledger.Pad.getPads({
                 user: {
                     isAdmin: req.user === 'ADMIN',
-                    id: req.user.participantId,
+                    id: req.user.userId,
                     role: req.user.role,
                 }
             }).then(pads => {
-
                 return res.json({success: true, items: pads, user: req.user});
             })
         }).catch((result) => {
@@ -38,7 +37,7 @@ router.post("/new", function (req, res, next) {
 
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
-            return Ledger.Pad.createPad(Object.assign(req.body, {owner: req.user.participantId}))
+            return Ledger.Pad.createPad(Object.assign(req.body, {owner: req.user.userId}))
                 .then((result) => {
                     //Adding files IPFS
                     if (files.length) {
@@ -91,7 +90,7 @@ router.post("/edit", function (req, res, next) {
                                 return res.json(result);
                             });
                         }).catch(error => {
-
+                            console.log(error);
                             return res.json({
                                 success: true,
                                 message: "The pad has been updated, but files won't be attached. Please try again later.",
@@ -118,7 +117,7 @@ router.post("/detail", function (req, res, next) {
             return Ledger.Pad.getPads({
                 user: {
                     isAdmin: req.user === 'ADMIN',
-                    id: req.user.participantId,
+                    id: req.user.userId,
                     role: req.user.role,
                 }
             }, {

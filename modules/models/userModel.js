@@ -2,6 +2,10 @@ let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 let User = new mongoose.Schema({
+    userId: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: false

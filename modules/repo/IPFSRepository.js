@@ -18,11 +18,11 @@ class IpfsFile {
 
         for (let i in arFiles) {
             content = fs.readFileSync(arFiles[i].path);
-            ft = fileType(content) || {ext: arFiles[i].mimetype || 'text/plain'};
+            ft = fileType(content) || {ext: 'txt'};
 
             tmpFiles[arFiles[i].originalname] = {
                 name: arFiles[i].originalname,
-                mime: mime.lookup(ft.ext),
+                mime: mime.lookup(ft.ext) || 'text/plain',
                 extension: ft.ext,
                 cryptoAlgorithm: process.env.CHAINPAD_CRYPTO_ALGHORITM,
                 crc: chainCrypto.crc(content)

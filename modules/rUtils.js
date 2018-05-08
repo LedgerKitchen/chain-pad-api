@@ -109,7 +109,7 @@ module.exports = {
             throw "Coordinates weren't set, please set their.";
         }
 
-        return  axios({
+        return axios({
             url: "https://maps.googleapis.com/maps/api/geocode/json?key=" + process.env.GOOGLE_KEY + "&latlng=" + [data.latitude, data.longitude].join(','),
             method: "get",
             responseType: 'json',

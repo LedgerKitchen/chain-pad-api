@@ -29,7 +29,7 @@
     "express-session": "^1.15.6",
     "file-type": "^7.6.0",
     "fs-extra": "*",
-    "grpc": "*",
+    "grpc": "1.10.1",
     "ipfs-api": "^20.0.0",
     "jsonwebtoken": "^8.2.0",
     "lodash": "^4.17.5",

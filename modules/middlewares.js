@@ -2,7 +2,7 @@ const JWT = require('./jwt');
 const log = require('./logger.js');
 const User = require('./repo/userRepository');
 const LC = require("./LedgerConnector");
-
+const rUtils = require('./rUtils');
 module.exports = {
     verifyToken: function (req, res, next) {
         let token = req.body.token || req.query.token || req.header('token');
@@ -11,11 +11,9 @@ module.exports = {
             return User.getUserMongo({phone: decodedToken.data.phone}, 'phone');
         }).then(user => {
             req.user = user.toObject();
-            req.user.participantId = req.user.networkCard.split('@')[0];
-
             return next()
         }).catch(error => {
-            res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 403});
+            res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 4032});
         })
     },
     onlyAdminAccess: function (req, res, next) {

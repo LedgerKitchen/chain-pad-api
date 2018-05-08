@@ -23,9 +23,6 @@ router.post('/send-sms', function (req, res, next) {
             log.info('Code has been sent -> ' + code);
             return SMS.send(req.body.phone, code).then((SMSSend) => {
                 if (SMSSend.success) {
-                    // if (process.env.DEBUG) {
-                    //     return res.json({success: true, code: code});
-                    // }
                     return res.json({success: true});
                 } else {
                     return SMS.remove(data.phone).then(() => {
@@ -54,7 +51,6 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
         return SMS.remove(data.phone).then(() => {
             return User.checkUserMongo(data).then(result => {
                 if (result.user) {
-                    result.user.participantId = result.user.networkCard.split('@')[0];
                     jwtToken = JWT.createJWToken(result.user);
 
                     return res.json({user: result.user, success: true, token: jwtToken});

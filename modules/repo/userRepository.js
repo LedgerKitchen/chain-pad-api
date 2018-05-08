@@ -28,7 +28,7 @@ class User extends Participants {
     searchInMongo(arFilter = {}) {
         return UserMongo.find(arFilter).select('-password').then((users) => {
             users.forEach((user, key) => {
-                users[key] = Object.assign(user.toJSON(), {participantId: user.networkCard.split('@')[0]});
+                users[key] = Object.assign(user.toJSON(), {userId: user.networkCard.split('@')[0]});
 
             });
             return users;
@@ -78,7 +78,8 @@ class User extends Participants {
     static createUserMongo(userData) {
         let user = {
             phone: userData.phone,
-            networkCard: userData.networkCard
+            networkCard: userData.networkCard,
+            userId: userData.networkCard.split('@')[0]
         };
 
         if (userData.name) {

@@ -51,7 +51,7 @@
 ```
 
 
-> При создании Pad может потребоваться привязать участника, для этого есть поле `participantsInvited` связанное с пользователем пол полю `participantId`
+> При создании Pad может потребоваться привязать участника, для этого есть поле `participantsInvited` связанное с пользователем пол полю `userId`
 #### 3. Создание PAD
 ---
 Шлём `POST` запрос на адрес `/pads/new`
@@ -153,7 +153,7 @@
         "phone": "79819469906",
         "networkCard": "79819469906@chainpad-network",
         "__v": 0,
-        "participantId": "79819469906"
+        "userId": "79819469906"
     }
 }
 ```
@@ -245,7 +245,7 @@
         "password": "<--SECURITY_FIELD-->",
         "networkCard": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33@chainpad-network",
         "__v": 0,
-        "participantId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33"
+        "userId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33"
     }
 }
 ```
@@ -268,7 +268,7 @@
             "phone": "79819469916",
             "networkCard": "79819469916@chainpad-network",
             "__v": 0,
-            "participantId": "79819469916"
+            "userId": "79819469916"
         },
     {
             "role": "PARTICIPANT",
@@ -276,7 +276,7 @@
             "phone": "79819469926",
             "networkCard": "79819469926@chainpad-network",
             "__v": 0,
-            "participantId": "79819469926"
+            "userId": "79819469926"
         }
 ]
 ```
@@ -355,14 +355,14 @@
     "users": [
         {
             "phone": "70003333333",
-            "participantId": "70003333333"
+            "userId": "70003333333"
         },
         {
             "phone": "79819469906",
             "email": "sadonsergey@gmail.com",
             "lastName": "Saddd",
             "name": "Test",
-            "participantId": "79819469906"
+            "userId": "79819469906"
         }
     ]
 }

@@ -147,7 +147,7 @@ In response, we get json c Pad and the current user.
         "phone": "79819469906",
         "networkCard": "79819469906@chainpad-network",
         "__v": 0,
-        "participantId": "79819469906"
+        "userId": "79819469906"
     }
 }
 ```
@@ -240,7 +240,7 @@ In response, we get json c Pads and the current user.
         "password": "<--SECURITY_FIELD-->",
         "networkCard": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33@chainpad-network",
         "__v": 0,
-        "participantId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33"
+        "userId": "460979c1e6ebeff9186643820a8eeaf8fe364720093314c65790cd5c1b291b33"
     }
 }
 ```
@@ -264,7 +264,7 @@ In response, we get json c Pads and the current user.
             "phone": "79819469916",
             "networkCard": "79819469916@chainpad-network",
             "__v": 0,
-            "participantId": "79819469916"
+            "userId": "79819469916"
         },
     {
             "role": "PARTICIPANT",
@@ -272,7 +272,7 @@ In response, we get json c Pads and the current user.
             "phone": "79819469926",
             "networkCard": "79819469926@chainpad-network",
             "__v": 0,
-            "participantId": "79819469926"
+            "userId": "79819469926"
         }
 ]
 ```
