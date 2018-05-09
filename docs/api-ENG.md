@@ -72,8 +72,8 @@ Send `POST` request to the address `/pads/edit`
 ##### List of fields in the query
 * name - Name
 * text - Content (Can include html)
-* membersInvited - invited members, a multi-field, that would pass a few simply to specify in the request one more field with the same name
-* membersInvited - the second participant, if any, the participants are not limited to the number.
+* participantsInvited - invited members, a multi-field, that would pass a few simply to specify in the request one more field with the same name
+* participantsInvited - the second participant, if any, the participants are not limited to the number.
 * token
 * geo - an array of two fields {latitude, longitude}
 * textType - default = "plain-text" Content type
@@ -159,6 +159,7 @@ Send the `POST` request to the address `/pads/<ACTION_NAME> `
 
 <ACTION_NAME> can apply options
 
+* publish - publish Pad
 * accept - confirm Pad
 * decline - reject Pad
 * delete - delete Pad
