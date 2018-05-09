@@ -46,12 +46,12 @@ router.post("/new", function (req, res, next) {
                                 padId: result.padId,
                                 files: files
                             }).then(result => {
-                                return res.json(result);
+                                return res.json(Object.assign(result, {padId: result.padId}));
                             });
                         }).catch(error => {
-
                             return res.json({
                                 success: true,
+                                padId: result.padId,
                                 message: "The pad has been created, but files won't be attached. Please try adding to files from update page.",
                                 fileError: rUtils.parseErrorHLF(error)
                             });
@@ -87,19 +87,20 @@ router.post("/edit", function (req, res, next) {
                                 padId: data.padId,
                                 files: files
                             }).then(result => {
-                                return res.json(result);
+                                return res.json(Object.assign(result, {padId: data.padId}));
                             });
                         }).catch(error => {
                             console.log(error);
                             return res.json({
                                 success: true,
+                                padId: data.padId,
                                 message: "The pad has been updated, but files won't be attached. Please try again later.",
                                 fileError: rUtils.parseErrorHLF(error)
                             });
                         })
                     }
 
-                    return res.json(result);
+                    return res.json(Object.assign(result, {padId: data.padId}));
                 })
         }).catch((result) => {
             let error = result.error || result.message;
