@@ -39,19 +39,20 @@ router.post("/new", function (req, res, next) {
         .then((Ledger) => {
             return Ledger.Pad.createPad(Object.assign(req.body, {owner: req.user.userId}))
                 .then((result) => {
+                    let padId = result.padId;
                     //Adding files IPFS
                     if (files.length) {
                         return IPFS.add(files, true).then(files => {
                             return Ledger.Pad.addFiles({
-                                padId: result.padId,
+                                padId: padId,
                                 files: files
                             }).then(result => {
-                                return res.json(Object.assign(result, {padId: result.padId}));
+                                return res.json(Object.assign(result, {padId: padId}));
                             });
                         }).catch(error => {
                             return res.json({
                                 success: true,
-                                padId: result.padId,
+                                padId: padId,
                                 message: "The pad has been created, but files won't be attached. Please try adding to files from update page.",
                                 fileError: rUtils.parseErrorHLF(error)
                             });
