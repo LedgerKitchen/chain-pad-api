@@ -13,7 +13,7 @@ module.exports = {
             req.user = user.toObject();
             return next()
         }).catch(error => {
-            res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 4032});
+            res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 403});
         })
     },
     onlyAdminAccess: function (req, res, next) {
