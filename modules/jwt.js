@@ -16,7 +16,7 @@ module.exports = {
     },
     createJWToken: function (user) {
         return jwt.sign({data: this.encodeUserForJWT(user)._doc}, process.env.JWT_SECRET, {
-            expiresIn: 259200,// expires in 180 days
+            expiresIn: (2592000 * 12),// expires in 180 days
             algorithm: 'HS256'
         });
     },
