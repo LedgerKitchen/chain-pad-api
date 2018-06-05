@@ -46,6 +46,10 @@ router.post("/new", function (req, res, next) {
             if(data.locale){
                 delete data.locale;
             }
+
+            if(data.test){
+                delete data.test;
+            }
             return Ledger.Pad.createPad(Object.assign(data, {owner: req.user.userId}))
                 .then((result) => {
                     let padId = result.padId;
@@ -97,6 +101,10 @@ router.post("/edit", function (req, res, next) {
             }
             if(data.locale){
                 delete data.locale;
+            }
+
+            if(data.test){
+                delete data.test;
             }
 
             return Ledger.Pad.updatePad(data)
