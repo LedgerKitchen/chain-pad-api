@@ -34,10 +34,13 @@ router.post("/", function (req, res, next) {
 router.post("/new", function (req, res, next) {
 
     let files = req.files || [];
-
+    let data = req.body;
     return req.LedgerConnector.init(req.user.networkCard)
         .then((Ledger) => {
-            return Ledger.Pad.createPad(Object.assign(req.body, {owner: req.user.userId}))
+            if (data.token) {
+                delete data.token
+            }
+            return Ledger.Pad.createPad(Object.assign(data, {owner: req.user.userId}))
                 .then((result) => {
                     let padId = result.padId;
                     //Adding files IPFS
@@ -77,6 +80,10 @@ router.post("/edit", function (req, res, next) {
 
             if (!data.padId) {
                 throw new Error('Missing required field padId');
+            }
+
+            if (data.token) {
+                delete data.token
             }
 
             return Ledger.Pad.updatePad(data)
@@ -144,7 +151,6 @@ router.post("/accept", function (req, res, next) {
             return Ledger.Pad.acceptPad({
                 padId: req.body.padId
             }).then(result => {
-
                 return res.json(result);
             })
         }).catch((result) => {
@@ -163,7 +169,6 @@ router.post("/decline", function (req, res, next) {
             return Ledger.Pad.declinePad({
                 padId: req.body.padId
             }).then(result => {
-
                 return res.json(result);
             })
         }).catch((result) => {

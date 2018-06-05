@@ -39,6 +39,9 @@ router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
         .then((Ledger) => {
             let data = req.body;
             data.phone = data.phone.replace(/[^0-9]/gim, '');
+            if(data.token){
+                delete data.token
+            }
             return Ledger.User.createUser(data)
                 .then((result) => {
                     return res.json(result);
@@ -57,6 +60,9 @@ router.post("/edit", function (req, res, next) {
             let data = req.body;
             if (data.phone) {
                 data.phone = data.phone.replace(/[^0-9]/gim, '');
+            }
+            if(data.token){
+                delete data.token
             }
 
             return Ledger.User.updateUser(data)
