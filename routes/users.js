@@ -42,6 +42,12 @@ router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
             if(data.token){
                 delete data.token
             }
+            if(data.fcmId){
+                delete data.fcmId;
+            }
+            if(data.locale){
+                delete data.locale;
+            }
             return Ledger.User.createUser(data)
                 .then((result) => {
                     return res.json(result);
@@ -64,7 +70,12 @@ router.post("/edit", function (req, res, next) {
             if(data.token){
                 delete data.token
             }
-
+            if(data.fcmId){
+                delete data.fcmId;
+            }
+            if(data.locale){
+                delete data.locale;
+            }
             return Ledger.User.updateUser(data)
                 .then((result) => {
                     return res.json(result);

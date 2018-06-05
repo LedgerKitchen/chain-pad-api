@@ -60,7 +60,13 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
                             if(data.code){
                                 delete data.code;
                             }
-                            return Ledger.User.createUser(data)
+                            if(data.fcmId){
+                                delete data.fcmId;
+                            }
+                            if(data.locale){
+                                delete data.locale;
+                            }
+                            return Ledger.User.createUser({phone:data.phone})
                                 .then((result) => {
                                     jwtToken = JWT.createJWToken(result.user);
                                     return res.json({user: result.user, success: true, token: jwtToken});
