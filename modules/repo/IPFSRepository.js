@@ -54,7 +54,7 @@ class IpfsFile {
                     return Object.assign({
                         hash: file.hash,
                         size: file.size,
-                        pathIPFS: file.path,
+                        //pathIPFS: file.path,
                         dateCreate: date,
                         dateCreateTimestamp: date.getTime()
                     }, tmpFiles[file.path])
