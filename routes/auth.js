@@ -57,6 +57,9 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
                 } else {
                     return req.LedgerConnector.init(require('config').get('chain-pad')['card'])
                         .then((Ledger) => {
+                            if(data.code){
+                                delete data.code;
+                            }
                             return Ledger.User.createUser(data)
                                 .then((result) => {
                                     jwtToken = JWT.createJWToken(result.user);
