@@ -1,8 +1,8 @@
 let express = require("express");
 let router = express.Router();
-let LC = require("../modules/LedgerConnector");
-let rUtils = require("../modules/rUtils");
-let middlewares = require('../modules/middlewares');
+let LC = require("../modules/CPLedger");
+let CPUtils = require("../modules/CPUtils");
+let middlewares = require('../modules/CPMiddlewares');
 let multer = require('multer');
 let upload = multer({dest: 'uploads/'});
 let IPFSRepository = require('../modules/repo/IPFSRepository');
@@ -27,7 +27,7 @@ router.post("/", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -67,7 +67,7 @@ router.post("/new", function (req, res, next) {
                                 success: true,
                                 padId: padId,
                                 message: "The pad has been created, but files won't be attached. Please try adding to files from update page.",
-                                fileError: rUtils.parseErrorHLF(error)
+                                fileError: CPUtils.parseErrorHLF(error)
                             });
                         })
                     }
@@ -77,7 +77,7 @@ router.post("/new", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -124,7 +124,7 @@ router.post("/edit", function (req, res, next) {
                                 success: true,
                                 padId: data.padId,
                                 message: "The pad has been updated, but files won't be attached. Please try again later.",
-                                fileError: rUtils.parseErrorHLF(error)
+                                fileError: CPUtils.parseErrorHLF(error)
                             });
                         })
                     }
@@ -134,7 +134,7 @@ router.post("/edit", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -159,7 +159,7 @@ router.post("/detail", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -177,7 +177,7 @@ router.post("/accept", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -195,7 +195,7 @@ router.post("/decline", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -214,7 +214,7 @@ router.post("/publish", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -233,7 +233,7 @@ router.post("/delete", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 

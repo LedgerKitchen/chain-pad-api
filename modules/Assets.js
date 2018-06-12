@@ -1,6 +1,6 @@
 'use strict';
 
-const ConnectNetwork = require('../modules/connect-to-network');
+const ConnectNetwork = require('./HLFConnector');
 
 class Assets {
 

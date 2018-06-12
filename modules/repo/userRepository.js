@@ -1,13 +1,13 @@
 'use strict';
 const config = require('config').get('chain-pad');
-const Participants = require('../participants');
+const Participants = require('../Participants');
 const SHA256 = require("crypto-js/sha256");
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const db = mongoose.connect(process.env.MONGO_HOST, {});
 db.Promise = require('bluebird');
 const UserMongo = require('../models/userModel');
-const log = require('../logger');
+const log = require('../CPLogger');
 
 class User extends Participants {
     constructor(connect) {

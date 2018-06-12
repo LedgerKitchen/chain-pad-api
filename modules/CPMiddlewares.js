@@ -1,8 +1,9 @@
-const JWT = require('./jwt');
-const log = require('./logger.js');
+const JWT = require('./JWT');
+const log = require('./CPLogger.js');
 const User = require('./repo/userRepository');
-const LC = require("./LedgerConnector");
-const rUtils = require('./rUtils');
+const LC = require("./CPLedger");
+const CPUtils = require('./CPUtils');
+
 module.exports = {
     verifyToken: function (req, res, next) {
         let token = req.body.token || req.query.token || req.header('token');

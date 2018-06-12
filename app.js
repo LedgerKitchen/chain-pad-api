@@ -3,7 +3,7 @@ let logger = require('morgan');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
 let multer = require('multer');
-let middlewares = require('./modules/middlewares');
+let middlewares = require('./modules/CPMiddlewares');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {

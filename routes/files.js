@@ -1,13 +1,12 @@
 let express = require('express');
 const router = express.Router();
-let rUtils = require("../modules/rUtils");
-let JWT = require("../modules/jwt");
-let log = require("../modules/logger");
+let CPUtils = require("../modules/CPUtils");
+let log = require("../modules/CPLogger");
 let IPFSRepository = require('../modules/repo/IPFSRepository');
 const IPFS = new IPFSRepository(process.env.IPFS_URL);
-const fileType = require('file-type');
-const mime = require('mime-types');
-let fs = require('fs');
+let fileType = require('file-type');
+let mime = require('mime-types');
+
 /************** Authenticate users **************/
 
 router.all('/get', function (req, res, next) {

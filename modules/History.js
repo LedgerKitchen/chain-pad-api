@@ -6,7 +6,6 @@ class History {
         this.connect = connect;
     }
 
-    //org.hyperledger.composer.system.HistorianRecord
     getAllHistory() {
         return this.connect.then((networkConnection) => {
             return networkConnection.getHistorian().then((r) => {

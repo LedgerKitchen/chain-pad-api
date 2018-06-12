@@ -1,6 +1,6 @@
 let ipfsAPI = require('ipfs-api');
 let fs = require('fs');
-let chainCrypto = require('../chainCrypto');
+let chainCrypto = require('../CPCrypto');
 const fileType = require('file-type');
 const mime = require('mime-types');
 

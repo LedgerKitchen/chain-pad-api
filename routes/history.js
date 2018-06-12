@@ -1,6 +1,6 @@
 let express = require("express");
 let router = express.Router();
-let rUtils = require("../modules/rUtils");
+let CPUtils = require("../modules/CPUtils");
 
 router.get("/list", function (req, res, next) {
 
@@ -15,7 +15,7 @@ router.get("/list", function (req, res, next) {
             return res.json({items: histories, user: req.user});
         }).catch((result) => {
             let error = result.error || result.message;
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
     });
 });

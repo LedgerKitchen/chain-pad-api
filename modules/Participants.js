@@ -1,9 +1,9 @@
 'use strict';
 
-const ConnectNetwork = require('../modules/connect-to-network');
+const ConnectNetwork = require('./HLFConnector');
 const Card = require('composer-common/lib/idcard');
 const AdminConnection = require('composer-admin').AdminConnection;
-const rUtils = require("./rUtils.js");
+const CPUtils = require("./CPUtils.js");
 
 class Participants {
 

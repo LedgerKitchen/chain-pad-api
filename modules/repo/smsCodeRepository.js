@@ -1,7 +1,7 @@
 let smsCode = require('../models/smsCodeModel');
-let log = require('../logger');
+let log = require('../CPLogger');
 const
-    smsFactory = require('./lib/smsFactory'),
+    smsFactory = require('./lib/SMSFactory'),
     axios = require('axios'),
     request = require('request-promise'),
     randomStr = require('randomstring'),

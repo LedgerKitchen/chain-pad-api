@@ -2,7 +2,7 @@
 
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 const config = require('config').get('chain-pad');
-const log = require('./logger.js');
+const log = require('./CPLogger.js');
 
 class ConnectNetwork {
     constructor() {
@@ -15,11 +15,11 @@ class ConnectNetwork {
 
     /* If need create new network instance */
     initNetwork() {
-        log.info('Composer Network connector has been started...');
+        log.info('HLF connector has been started...');
         return this.networkConnection.connect(process.env.CARD)
             .then((result) => {
                 this.networkDefinition = result;
-                log.info('Network connection to ' + result.getIdentifier() + ' successfully installed...');
+                log.info('HLF connection to ' + result.getIdentifier() + ' successfully installed...');
                 return true;
             })
     }
@@ -35,18 +35,19 @@ class ConnectNetwork {
     /* Create one network instance */
     static network(cardName) {
         this.card = cardName ? cardName : process.env.CARD;
-        log.info('User network card ->' + this.card);
+        log.info('HLF network card ->' + this.card);
         this.networkConnection = new BusinessNetworkConnection();
-        log.info('Composer Promise Network connector has been initializing...');
+        log.info('HLF connector has been initializing...');
 
         return this.networkConnection.connect(this.card)
             .then((result) => {
-                log.info('Network connection to -> ' + result.getIdentifier() + ' successfully started with a card -> ' + this.card);
+                log.info('HLF connection to -> ' + result.getIdentifier() + ' successfully started with a card -> ' + this.card);
                 return this.networkConnection;
             })
     }
 
     static closeNetwork(connect) {
+        log.info('HLF connection to -> chainpad-network@0.0.1 was disconnected');
         return connect.disconnect();
     }
 

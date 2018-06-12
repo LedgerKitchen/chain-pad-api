@@ -1,12 +1,12 @@
 'use strict';
 'use strict';
 
-const Assets = require('../assets');
+const Assets = require('../Assets');
 const SHA256 = require("crypto-js/sha256");
 const crypto = require('crypto');
 const ipfsAPI = require('ipfs-api');
-let chainCrypto = require('../chainCrypto');
-const rUtils = require('../rUtils');
+let chainCrypto = require('../CPCrypto');
+const CPUtils = require('../CPUtils');
 
 class Pad extends Assets {
 
@@ -64,7 +64,7 @@ class Pad extends Assets {
         }
 
         if (typeof arData.geo !== 'undefined' && typeof arData.geo.address === 'undefined') {
-            await rUtils.getAddressByPoints(arData.geo).then(addr => {
+            await CPUtils.getAddressByPoints(arData.geo).then(addr => {
                 arData.geo.address = addr.formatted_address;
             });
         }
@@ -96,7 +96,7 @@ class Pad extends Assets {
         }
 
         if (typeof arData.geo !== 'undefined' && typeof arData.geo.address === 'undefined') {
-            await rUtils.getAddressByPoints(arData.geo).then(addr => {
+            await CPUtils.getAddressByPoints(arData.geo).then(addr => {
                 arData.geo.address = addr.formatted_address;
             });
         }

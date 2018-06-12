@@ -1,9 +1,9 @@
 let express = require('express');
 const router = express.Router();
-let rUtils = require("../modules/rUtils");
-let JWT = require("../modules/jwt");
-let log = require("../modules/logger");
-let middlewares = require("../modules/middlewares");
+let CPUtils = require("../modules/CPUtils");
+let JWT = require("../modules/JWT");
+let log = require("../modules/CPLogger");
+let middlewares = require("../modules/CPMiddlewares");
 const User = require("../modules/repo/userRepository");
 const SMS = require("../modules/repo/smsCodeRepository");
 
@@ -55,18 +55,18 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
 
                     return res.json({user: result.user, success: true, token: jwtToken});
                 } else {
-                    return req.LedgerConnector.init(require('config').get('chain-pad')['card'])
+                    return req.LedgerConnector.init(process.env.CARD)
                         .then((Ledger) => {
-                            if(data.code){
+                            if (data.code) {
                                 delete data.code;
                             }
-                            if(data.fcmId){
+                            if (data.fcmId) {
                                 delete data.fcmId;
                             }
-                            if(data.locale){
+                            if (data.locale) {
                                 delete data.locale;
                             }
-                            return Ledger.User.createUser({phone:data.phone})
+                            return Ledger.User.createUser({phone: data.phone})
                                 .then((result) => {
                                     jwtToken = JWT.createJWToken(result.user);
                                     return res.json({user: result.user, success: true, token: jwtToken});
@@ -76,7 +76,7 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
 
                             return res.send({
                                 success: false,
-                                message: rUtils.parseErrorHLF(error),
+                                message: CPUtils.parseErrorHLF(error),
                                 httpErrorCode: 403,
                             });
                         });

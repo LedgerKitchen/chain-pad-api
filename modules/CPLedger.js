@@ -2,15 +2,15 @@
 
 const User = require("./repo/userRepository");
 const Pad = require("./repo/padRepository");
-const History = require("../modules/history");
+const History = require("./History");
 const EventEmitter = require('events');
-const HLF = require("../modules/connect-to-network");
-const log = require("./logger");
+const HLF = require("./HLFConnector");
+const log = require("./CPLogger");
 
 //let emitter = new EventEmitter();
 
 
-class LedgerConnector extends EventEmitter {
+class CPLedger extends EventEmitter {
     constructor() {
         super();
     }
@@ -23,15 +23,15 @@ class LedgerConnector extends EventEmitter {
                 connect.once('event', (event) => {
                     try {
                         log.info('caught event from HLF.');
+                        let arEvent;
                         return connect.then(async (networkConnection) => {
                             let networkDefinition = networkConnection.businessNetwork,
-                                serializer = networkDefinition.getSerializer(),
-                                arEvent = serializer.toJSON(event);
-
+                                serializer = networkDefinition.getSerializer();
                             //console.log(arEvent);
 
-                            return arEvent;
+                            return serializer.toJSON(event);
                         }).then(function (arEvent) {
+
                             if (arEvent.action) {
                                 log.info('caught event action --> ' + arEvent.action);
                                 switch (arEvent.action) {
@@ -48,6 +48,7 @@ class LedgerConnector extends EventEmitter {
                                         break;
                                 }
                             }
+
                         });
                     } catch (e) {
                         log.error(e);
@@ -56,7 +57,6 @@ class LedgerConnector extends EventEmitter {
 
                 this.on('hlf-connection-close', async (connect) => {
                     await HLF.closeNetwork(connect);
-                    log.info('Network connection to -> chainpad-network@0.0.1 was disconnected');
                 });
 
 
@@ -77,4 +77,4 @@ class LedgerConnector extends EventEmitter {
     }
 }
 
-module.exports = LedgerConnector;
+module.exports = CPLedger;

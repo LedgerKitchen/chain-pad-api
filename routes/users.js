@@ -1,7 +1,7 @@
 let express = require("express");
 let router = express.Router();
-let rUtils = require("../modules/rUtils");
-let middlewares = require('../modules/middlewares');
+let CPUtils = require("../modules/CPUtils");
+let middlewares = require('../modules/CPMiddlewares');
 let QRCode = require('qrcode');
 const config = require('config').get('chain-pad');
 
@@ -16,7 +16,7 @@ router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 router.post("/me", function (req, res, next) {
@@ -30,7 +30,7 @@ router.post("/me", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
@@ -55,7 +55,7 @@ router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -83,7 +83,7 @@ router.post("/edit", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -118,7 +118,7 @@ router.post("/search", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 
@@ -154,7 +154,7 @@ router.post("/checkExistsByPhone", function (req, res, next) {
         }).catch((result) => {
             let error = result.error || result.message;
 
-            return res.send({success: false, message: rUtils.parseErrorHLF(error)});
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
         });
 });
 /******************* END ALL PARTICIPANTS ROUTES *******************/
