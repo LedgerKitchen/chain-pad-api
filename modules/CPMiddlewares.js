@@ -7,7 +7,6 @@ const CPUtils = require('./CPUtils');
 module.exports = {
     verifyToken: function (req, res, next) {
         let token = req.body.token || req.query.token || req.header('token');
-        log.debug('Token Catch ----> ' + token);
         JWT.verifyJWTToken(token).then((decodedToken) => {
             return User.getUserMongo({phone: decodedToken.data.phone}, 'phone');
         }).then(user => {

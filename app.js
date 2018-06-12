@@ -4,6 +4,7 @@ let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
 let multer = require('multer');
 let middlewares = require('./modules/CPMiddlewares');
+let CPLogger = require('./modules/CPLogger.js');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -25,6 +26,15 @@ app.use(cookieParser());
 let onFinished = require('on-finished');
 
 app.use(function (req, res, next) {
+
+    if (process.env.DEBUG) {
+        console.info('<===> Data which was received <===>');
+        console.log('Url:' + req.url);
+        console.log('Method: ' + req.method);
+        console.log(req.body);
+        console.info('<===> End data <===>');
+    }
+
     onFinished(res, function () {
         if (typeof  req.LedgerConnector !== 'undefined') {
             req.LedgerConnector.close();
