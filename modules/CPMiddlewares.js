@@ -11,6 +11,11 @@ module.exports = {
             return User.getUserMongo({phone: decodedToken.data.phone}, 'phone');
         }).then(user => {
             req.user = user.toObject();
+            if (process.env.DEBUG) {
+                console.info('<===> Data which was parsed from JWT <===>');
+                console.log(req.user);
+                console.info('<===> End data <===>');
+            }
             return next()
         }).catch(error => {
             res.json({success: false, message: "Invalid auth token provided.", httpErrorCode: 403});
