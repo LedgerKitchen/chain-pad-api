@@ -28,8 +28,9 @@ exports.send = (phone, text, connector) => {
     }).then(function (response) {
 
         let result = false;
-        if (response.message) {
-            result = response.message.length > 0
+
+        if (response.messages) {
+            result = response.messages.length > 0
         } else {
             result = response.length > 0;
         }
