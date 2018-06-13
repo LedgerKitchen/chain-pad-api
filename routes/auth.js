@@ -21,7 +21,7 @@ router.post('/send-sms', function (req, res, next) {
             }
 
             log.info('Code has been sent -> ' + code);
-            return SMS.send(req.body.phone, code).then((SMSSend) => {
+            return SMS.send(req.body.phone, code, data.countryCode || null).then((SMSSend) => {
                 if (SMSSend.success) {
                     return res.json({success: true});
                 } else {
@@ -57,16 +57,7 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
                 } else {
                     return req.LedgerConnector.init(process.env.CARD)
                         .then((Ledger) => {
-                            if (data.code) {
-                                delete data.code;
-                            }
-                            if (data.fcmId) {
-                                delete data.fcmId;
-                            }
-                            if (data.locale) {
-                                delete data.locale;
-                            }
-                            return Ledger.User.createUser({phone: data.phone})
+                            return Ledger.User.createUser(data)
                                 .then((result) => {
                                     jwtToken = JWT.createJWToken(result.user);
                                     return res.json({user: result.user, success: true, token: jwtToken});

@@ -32,7 +32,17 @@ let User = new mongoose.Schema({
         type: String,
         required: false,
         default: "PARTICIPANT"
-    }
+    },
+    device: {
+        type: Array,
+        required: false,
+        default: []
+    },
+    locale: {
+        type: String,
+        default: 'en'
+    },
+
 });
 
 module.exports = mongoose.model('User', User);

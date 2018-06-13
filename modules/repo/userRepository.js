@@ -8,6 +8,7 @@ const db = mongoose.connect(process.env.MONGO_HOST, {});
 db.Promise = require('bluebird');
 const UserMongo = require('../models/userModel');
 const log = require('../CPLogger');
+const CPUtils = require('../CPUtils');
 
 class User extends Participants {
     constructor(connect) {
@@ -68,11 +69,21 @@ class User extends Participants {
         return UserMongo.findOne(field)
             .then(user => {
                 if (user) {
+                    if (userData.fcmId) {
+                        return this.setDevice(user, userData.fcmId).then(user => {
+                            return Promise.resolve(Object.assign({user: user}));
+                        })
+                    }
                     return Promise.resolve(Object.assign({user: user}));
                 } else {
                     return Promise.resolve({user: null});
                 }
             });
+    }
+
+    static setDevice(user, device) {
+        user.set({device: CPUtils.arrayUnique(user.device.concat([device]))});
+        return user.save();
     }
 
     static createUserMongo(userData) {
@@ -99,6 +110,14 @@ class User extends Participants {
             user.role = userData.role;
         }
 
+        if (userData.fcmId) {
+            user.device = userData.fcmId;
+        }
+
+        if (userData.locale) {
+            user.locale = userData.locale;
+        }
+
         return new UserMongo(user).save();
     }
 
@@ -120,6 +139,14 @@ class User extends Participants {
 
             if (userData.role) {
                 user.role = userData.role;
+            }
+
+            if (userData.fcmId) {
+                user.set({device: CPUtils.arrayUnique(user.device.concat([userData.fcmId]))});
+            }
+
+            if (userData.locale) {
+                user.locale = userData.locale;
             }
 
             return user.save();
@@ -146,10 +173,11 @@ class User extends Participants {
                     transaction: this.participant['transactions']['createUser']
                 }, {
                     "$class": this.participant['transactions']['createUser']['fullNamespace'],
-                    data: Object.assign({
+                    data: {
                         "$class": this.participant['fullNamespace'],
                         "userId": id,
-                    }, arData)
+                        "phone": arData.phone,
+                    },
                 }).then(result => {
                     if (result.success) {
                         return this.identity({

@@ -5,7 +5,7 @@ let UserMongo = require('./modules/repo/userRepository');
 let data = {
     name: 'Admin',
     lastName: 'Adminov',
-    email: 'admin@chain-pad.com',
+    email: 'chainpad-network',
     phone: '70009999999',
     networkCard: process.env.CARD,
     role: 'ADMIN'

@@ -3,13 +3,20 @@ const request = require('request-promise'),
 
 
 module.exports = {
-    init: function () {
-        switch (process.env.SMS_CONNECTOR) {
-            case 'US':
-                return new this.smsUS(process.env.SMS_API_KEY, process.env.SMS_API_SECRET_KEY);
+    init: function (connector) {
+
+        //connector = connector || process.env.SMS_CONNECTOR;
+
+        console.log('Set sms connector as ' + connector || 'DEFAULT(US)');
+
+        switch (connector) {
             case 'RUS':
-            default:
+            case 'RU':
+            case 'RUSSIA':
                 return new this.smsRUS(process.env.SMS_USER_RUS, process.env.SMS_PASSWORD_RUS);
+            case 'US':
+            default:
+                return new this.smsUS(process.env.SMS_API_KEY, process.env.SMS_API_SECRET_KEY);
         }
     },
     smsUS: function smsUS(key, secret, protocol, host, port, apiVersion, extraData, debug, type) {
@@ -31,34 +38,42 @@ module.exports = {
         };
 
         self.connect = function (method, action, body) {
+            action = format('/{0}/{1}/', self.apiVersion, action);
 
-            return request({
-                url: "https://" + self.host + action, headers: {
-                    "Authorization": get_authorisation_http_header(method, format('/{0}/{1}/', self.apiVersion, action)),
-                    "User-Agent": "SMS Node Client",
-                    "Accept": self.type
-                }, method: method.toUpperCase(), json: body
-            });
+            method = method.toUpperCase();
+            // Set up request metadata
+            if (method !== "GET" && method !== "POST" && method !== "DELETE" && method !== "OPTIONS" && method !== "PATCH")
+                method = "GET";
+
+            let headers = {
+                "Authorization": get_authorisation_http_header(method, action),
+                "User-Agent": "SMS Node Client",
+                "Accept": self.type
+            };
+            let options = {url: "https://" + self.host + action, headers: headers, method: method, json: body};
+
+
+            return request(options);
+
         };
 
         function get_authorisation_http_header(method, action) {
-            let hash,
-                hmac,
-                timestamp = parseInt(new Date().getTime() / 1000),
-                nonce = random(),
-                raw = timestamp + "\n" + nonce + "\n" + method + "\n" + action + "\n" + self.host + "\n" + self.port + "\n" + self.extraData + "\n";
+            let hash, hmac;
+            let timestamp = parseInt(new Date().getTime() / 1000);
 
+            let nonce = random();
+            let raw = timestamp + "\n" + nonce + "\n" + method + "\n" + action + "\n" + self.host + "\n" + self.port + "\n" + self.extraData + "\n";
             // Encryptions
             hash = crypto.createHmac('sha256', self.secret).update(raw).digest('base64');
-            hmac = format('MAC id="{0}",ts="{1}",nonce="{2}",mac="{3}"', key, timestamp, nonce, hash);
+            mac = format('MAC id="{0}",ts="{1}",nonce="{2}",mac="{3}"', key, timestamp, nonce, hash);
 
-            return hmac;
+            return mac;
         }
 
         function format(format) {
             let args = Array.prototype.slice.call(arguments, 1);
             return format.replace(/{(\d+)}/g, function (match, number) {
-                return typeof args[number] !== 'undefined'
+                return typeof args[number] != 'undefined'
                     ? args[number]
                     : match
                     ;

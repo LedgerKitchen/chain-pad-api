@@ -19,8 +19,8 @@ exports.get = (phone, code) => smsCode.findOne({phone: phone, code: code})
     });
 exports.remove = phone => smsCode.remove({phone});
 
-exports.send = (phone, text) => {
-    let sms = smsFactory.init();
+exports.send = (phone, text, connector) => {
+    let sms = smsFactory.init(connector);
 
     return sms.send({
         destination: phone,
