@@ -7,7 +7,7 @@ module.exports = {
                 priority: 'high',
                 delayWhileIdle: true,
                 timeToLive: 3,
-                data: arData.data,
+                data: arData.data || {},
 
             };
 

@@ -31,8 +31,10 @@ router.post('/test-fcm', [middlewares.verifyToken, middlewares.createHLFConnecti
     if (data.data) {
         arData.data = data.data;
     }
+    if (data.notification) {
+        arData.notification = data.notification;
+    }
 
-    arData.text = data.text || arData.text;
 
     fcm.sendMessage(arData.device, arData, function (result) {
         console.log(result);
