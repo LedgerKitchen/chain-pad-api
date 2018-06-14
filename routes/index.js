@@ -28,6 +28,10 @@ router.post('/test-fcm', [middlewares.verifyToken, middlewares.createHLFConnecti
         arData.device = [arData.device];
     }
 
+    if (data.data) {
+        arData.data = data.data;
+    }
+
     arData.text = data.text || arData.text;
 
     fcm.sendMessage(arData.device, arData, function (result) {
