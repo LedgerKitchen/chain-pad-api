@@ -39,6 +39,9 @@ class User extends Participants {
     static getUserMongo(userData, byField = 'email') {
         let field;
         switch (byField) {
+            case 'id':
+                field = {userId: userData.userId};
+                break;
             case 'email':
                 field = {email: userData.email};
                 break;
@@ -55,6 +58,9 @@ class User extends Participants {
     static checkUserMongo(userData, byField = 'phone') {
         let field;
         switch (byField) {
+            case 'id':
+                field = {userId: userData.userId};
+                break;
             case 'email':
                 field = {email: userData.email};
                 break;

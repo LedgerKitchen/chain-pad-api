@@ -47,7 +47,7 @@ router.post('/delete', function (req, res, next) {
 
     return IPFS.delete(req.body.hash, req.body.name).then(() => {
 
-        return req.LedgerConnector.init(req.user.networkCard).then(Ledger => {
+        return req.CPLedger.init(req.user.networkCard).then(Ledger => {
             return Ledger.Pad.deleteFile({
                 padId: req.body.padId,
                 fileDeleteHash: req.body.hash

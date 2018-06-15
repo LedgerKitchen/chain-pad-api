@@ -4,7 +4,7 @@ let CPUtils = require("../modules/CPUtils");
 
 router.get("/list", function (req, res, next) {
 
-    req.LedgerConnector.init(req.user.networkCard).then((Ledger) => {
+    req.CPLedger.init(req.user.networkCard).then((Ledger) => {
         let fnStr = req.user.role === 'ADMIN' ? 'getAllHistory' : 'getAllHistoryByCurrentParticipant';
         let fn = {
             getAllHistory: Ledger.History.getAllHistory(),

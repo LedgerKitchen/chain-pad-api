@@ -55,7 +55,7 @@ router.post('/sign-in', middlewares.createHLFConnection, function (req, res, nex
 
                     return res.json({user: result.user, success: true, token: jwtToken});
                 } else {
-                    return req.LedgerConnector.init(process.env.CARD)
+                    return req.CPLedger.init(process.env.CARD)
                         .then((Ledger) => {
                             return Ledger.User.createUser(data)
                                 .then((result) => {

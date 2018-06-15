@@ -36,8 +36,8 @@ app.use(function (req, res, next) {
     }
 
     onFinished(res, function () {
-        if (typeof  req.LedgerConnector !== 'undefined') {
-            req.LedgerConnector.close();
+        if (typeof  req.CPLedger !== 'undefined') {
+            req.CPLedger.close();
         }
     });
     next();

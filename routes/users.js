@@ -8,7 +8,7 @@ const config = require('config').get('chain-pad');
 /******************* ALL PARTICIPANTS ROUTES *******************/
 router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
 
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers().then(users => {
                 return res.json({success: true, items: users, user: req.user});
@@ -20,7 +20,7 @@ router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
         });
 });
 router.post("/me", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers(req.user.userId).then(user => {
                 QRCode.toDataURL(req.user.userId).then(qrCode => {
@@ -35,7 +35,7 @@ router.post("/me", function (req, res, next) {
 });
 router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
 
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
             data.phone = data.phone.replace(/[^0-9]/gim, '');
@@ -61,7 +61,7 @@ router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
 
 router.post("/edit", function (req, res, next) {
 
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
             if (data.phone) {
@@ -88,7 +88,7 @@ router.post("/edit", function (req, res, next) {
 });
 
 router.post("/search", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             let query = req.body.query || '', searchObject = {};
 
@@ -123,7 +123,7 @@ router.post("/search", function (req, res, next) {
 });
 
 router.post("/checkExistsByPhone", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
 
             let phones = req.body.phone || [''];

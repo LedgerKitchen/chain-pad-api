@@ -1,7 +1,7 @@
 const JWT = require('./JWT');
 const log = require('./CPLogger.js');
 const User = require('./repo/userRepository');
-const LC = require("./CPLedger");
+const CPLedger = require("./CPLedger");
 const CPUtils = require('./CPUtils');
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
         return res.json({success: false, message: "Access denied (Only Admin).", httpErrorCode: 403});
     },
     createHLFConnection: function (req, res, next) {
-        req.LedgerConnector = new LC();
+        req.CPLedger = new CPLedger();
         return next()
     }
 };

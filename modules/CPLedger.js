@@ -3,50 +3,45 @@
 const User = require("./repo/userRepository");
 const Pad = require("./repo/padRepository");
 const History = require("./History");
-const EventEmitter = require('events');
 const HLF = require("./HLFConnector");
 const log = require("./CPLogger");
-
-//let emitter = new EventEmitter();
-
+const EventEmitter = require('events');
 
 class CPLedger extends EventEmitter {
     constructor() {
         super();
+
+        this.on('actionPadEvent', (connect, event, participant) => {
+            log.info('Caught event action from CPLedger --> actionPadEvent');
+            return Pad.event(connect, event, participant);
+        });
     }
 
     init(card) {
+        let self = this;
         return HLF.network(card)
             .then((connect) => {
                 this.hlf = connect;
 
                 connect.once('event', (event) => {
                     try {
-                        log.info('caught event from HLF.');
-                        let arEvent;
+                        log.info('Caught event from HLF.');
+                        let currentParticipant;
                         return connect.then(async (networkConnection) => {
                             let networkDefinition = networkConnection.businessNetwork,
                                 serializer = networkDefinition.getSerializer();
-                            //console.log(arEvent);
-
+                            currentParticipant = networkConnection.getCard().getUserName();
                             return serializer.toJSON(event);
                         }).then(function (arEvent) {
+                            if (arEvent.action && typeof arEvent['$class'] !== 'undefined') {
+                                let actType = arEvent['$class'].split('.');
+                                actType = actType[actType.length - 1];
 
-                            if (arEvent.action) {
-                                log.info('caught event action --> ' + arEvent.action);
-                                switch (arEvent.action) {
-                                    case 'create':
-                                        break;
-                                    case 'update':
-                                        break;
-                                    case 'addFiles':
-                                        break;
-                                    case 'accept':
-                                    case 'decline':
-                                    case 'publish':
-                                    case 'delete':
-                                        break;
-                                }
+                                log.info('Caught event action --> ' + arEvent.action + ' & Action Type -->' + actType);
+
+                                if (actType) self.emit(actType, new Promise((resolve) => {
+                                    resolve(connect);
+                                }), arEvent, currentParticipant);
                             }
 
                         });
@@ -57,6 +52,10 @@ class CPLedger extends EventEmitter {
 
                 this.on('hlf-connection-close', async (connect) => {
                     await HLF.closeNetwork(connect);
+                });
+
+                this.on('testEvent', (r) => {
+                    console.log('work');
                 });
 
 

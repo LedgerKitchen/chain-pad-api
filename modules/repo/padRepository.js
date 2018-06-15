@@ -7,12 +7,89 @@ const crypto = require('crypto');
 const ipfsAPI = require('ipfs-api');
 let chainCrypto = require('../CPCrypto');
 const CPUtils = require('../CPUtils');
+const FCM = require('./lib/FCM');
+const User = require("./userRepository");
 
 class Pad extends Assets {
 
     constructor(connect) {
         super(connect);
         this.asset = require('config').get('chain-pad.architecture.assets.pad');
+    }
+
+    static event(connect, arEvent, currentParticipant) {
+        let Pad = new this(connect),
+            mAction,
+            sendFCM = false;
+        //console.log(arEvent, currentParticipant);
+
+        switch (arEvent.action) {
+            case 'createPad':
+                mAction = 'create';
+                break;
+            case 'updatePad':
+                mAction = 'update';
+                break;
+            case 'addFilesPad':
+                break;
+            case 'acceptPad':
+                sendFCM = true;
+                if (arEvent.pad.status === 'CLOSED') {
+                    mAction = 'archive';
+                } else {
+                    mAction = 'accept';
+                }
+                break;
+            case 'declinePad':
+                sendFCM = true;
+                mAction = 'decline';
+                break;
+            case 'publishPad':
+                sendFCM = true;
+                mAction = 'invite';
+                break;
+            /* case 'deletePad':
+                 sendFCM = true;
+                 mAction = 'accept';
+                 break;*/
+        }
+
+        if (sendFCM && arEvent.pad.participantsInvited.length > 0) {
+            Pad.getPads({}, {padId: arEvent.padId}).then(pad => {
+                delete pad.history;
+                let allParticipants = pad.participantsInvited.concat([pad.owner]);
+                if (allParticipants.length > 0) {
+                    return Promise.all(allParticipants.map(function (user) {
+                        return User.getUserMongo({userId: user.userId}, 'id')
+                    })).then(users => {
+                        let fcmReceivers = [];
+
+                        users.forEach(function (user) {
+                            if (user.userId === currentParticipant) {
+                                currentParticipant = user;
+                            } else {
+                                user.toObject().device.forEach((device) => {
+                                    fcmReceivers.push(device);
+                                });
+                            }
+                        });
+
+                        fcmReceivers = CPUtils.arrayUnique(fcmReceivers);
+
+                        FCM.sendMessage(fcmReceivers, {
+                            data: {
+                                "type": mAction,
+                                "padId": pad.padId,
+                                "pad": pad,
+
+                                "initiator": currentParticipant.phone,
+                                "padTitle": pad.name
+                            }
+                        });
+                    });
+                }
+            });
+        }
     }
 
     getPads(arParams = {}, arFilter = {}) {

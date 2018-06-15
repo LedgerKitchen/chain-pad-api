@@ -13,7 +13,7 @@ const IPFS = new IPFSRepository(process.env.IPFS_URL);
 ///pads/new
 router.post("/", function (req, res, next) {
 
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.Pad.getPads({
                 user: {
@@ -35,7 +35,7 @@ router.post("/new", function (req, res, next) {
 
     let files = req.files || [];
     let data = req.body;
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (data.token) {
                 delete data.token
@@ -85,7 +85,7 @@ router.post("/edit", function (req, res, next) {
     let data = req.body,
         files = req.files || [];
 
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
 
             if (!data.padId) {
@@ -139,7 +139,7 @@ router.post("/edit", function (req, res, next) {
 });
 
 router.post("/detail", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -164,7 +164,7 @@ router.post("/detail", function (req, res, next) {
 });
 
 router.post("/accept", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -182,7 +182,7 @@ router.post("/accept", function (req, res, next) {
 });
 
 router.post("/decline", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -200,7 +200,7 @@ router.post("/decline", function (req, res, next) {
 });
 
 router.post("/publish", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
@@ -219,7 +219,7 @@ router.post("/publish", function (req, res, next) {
 });
 
 router.post("/delete", function (req, res, next) {
-    return req.LedgerConnector.init(req.user.networkCard)
+    return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
