@@ -8,33 +8,6 @@ module.exports = {
     ucFirst: function (string) {
         return string.charAt(0).toUpperCase() + string.substr(1).toLowerCase();
     },
-    cmcToString: function (string) {
-        return string.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) {
-            return str.toUpperCase();
-        });
-    },
-    writeCardToFile: function (cardFileName, card) {
-        let cardFilePath,
-            dir = './exportsCards';
-        cardFileName = './exportsCards/' + cardFileName + '.card';
-        return card.toArchive({type: 'nodebuffer'})
-            .then((cardBuffer) => {
-                // got the id card to write to a buffer
-                cardFilePath = path.resolve(cardFileName);
-                try {
-                    if (!fs.existsSync(dir)) {
-                        fs.mkdirSync(dir);
-                    }
-                    fs.writeFileSync(cardFilePath, cardBuffer);
-
-                } catch (cause) {
-                    const error = new Error(`Unable to write card file: ${cardFilePath}`);
-                    error.cause = cause;
-                    return Promise.reject(error);
-                }
-            });
-    },
-    getExportCardPath: './exportsCards/',
     parseErrorHLF: function (error) {
         try {
             if (this.extractJSON(error) !== null) {
@@ -133,5 +106,12 @@ module.exports = {
         }
 
         return a;
+    },
+    excludeItemFromArray: function (index, value, array) {
+        if (array && index && value) {
+            return array.filter(function (item) {
+                return item[index] !== value;
+            })
+        }
     }
 };

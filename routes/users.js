@@ -1,6 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let CPUtils = require("../modules/CPUtils");
+const User = require("../modules/repo/userRepository");
 let middlewares = require('../modules/CPMiddlewares');
 let QRCode = require('qrcode');
 const config = require('config').get('chain-pad');
@@ -20,13 +21,27 @@ router.post("/", [middlewares.onlyAdminAccess], function (req, res, next) {
         });
 });
 router.post("/me", function (req, res, next) {
+    let data = req.body;
     return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             return Ledger.User.getAllUsers(req.user.userId).then(user => {
                 QRCode.toDataURL(req.user.userId).then(qrCode => {
-                    return res.json({success: true, item: user, user: req.user, qrCode: qrCode});
+                    return {success: true, item: user, user: req.user, qrCode: qrCode};
+                }).then(result => {
+                    return User.checkUserMongo(data).then(() => res.json(result))
                 });
             })
+        }).catch((result) => {
+            let error = result.error || result.message;
+
+            return res.send({success: false, message: CPUtils.parseErrorHLF(error)});
+        });
+});
+router.post("/me/check", function (req, res, next) {
+    let data = req.body;
+    return req.CPLedger.init(req.user.networkCard)
+        .then(() => {
+            return User.checkUserMongo(Object.assign(data, {phone: req.user.phone})).then(() => res.json({success: true}))
         }).catch((result) => {
             let error = result.error || result.message;
 
@@ -39,13 +54,13 @@ router.post("/new", [middlewares.onlyAdminAccess], function (req, res, next) {
         .then((Ledger) => {
             let data = req.body;
             data.phone = data.phone.replace(/[^0-9]/gim, '');
-            if(data.token){
+            if (data.token) {
                 delete data.token
             }
-            if(data.fcmId){
+            if (data.fcmId) {
                 delete data.fcmId;
             }
-            if(data.locale){
+            if (data.locale) {
                 delete data.locale;
             }
             return Ledger.User.createUser(data)
@@ -64,16 +79,16 @@ router.post("/edit", function (req, res, next) {
     return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
             let data = req.body;
-            if (data.phone) {
-                data.phone = data.phone.replace(/[^0-9]/gim, '');
-            }
-            if(data.token){
+
+            data.phone = req.user.phone.replace(/[^0-9]/gim, '');
+
+            if (data.token) {
                 delete data.token
             }
-            if(data.fcmId){
+            if (data.fcmId) {
                 delete data.fcmId;
             }
-            if(data.locale){
+            if (data.locale) {
                 delete data.locale;
             }
             return Ledger.User.updateUser(data)

@@ -8,12 +8,14 @@ const log = require("./CPLogger");
 const EventEmitter = require('events');
 
 class CPLedger extends EventEmitter {
-    constructor() {
+    constructor(cacheStore) {
         super();
+
+        this.cacheStore = cacheStore || null;
 
         this.on('actionPadEvent', (connect, event, participant) => {
             log.info('Caught event action from CPLedger --> actionPadEvent');
-            return Pad.event(connect, event, participant);
+            return Pad.event(connect, event, participant, this.cacheStore);
         });
     }
 
@@ -22,7 +24,6 @@ class CPLedger extends EventEmitter {
         return HLF.network(card)
             .then((connect) => {
                 this.hlf = connect;
-
                 connect.once('event', (event) => {
                     try {
                         log.info('Caught event from HLF.');
@@ -52,10 +53,6 @@ class CPLedger extends EventEmitter {
 
                 this.on('hlf-connection-close', async (connect) => {
                     await HLF.closeNetwork(connect);
-                });
-
-                this.on('testEvent', (r) => {
-                    console.log('work');
                 });
 
 

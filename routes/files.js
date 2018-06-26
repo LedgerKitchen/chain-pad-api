@@ -10,8 +10,8 @@ let mime = require('mime-types');
 /************** Authenticate users **************/
 
 router.all('/get', function (req, res, next) {
-    return IPFS.get(req.body.hash).then(file => {
-        let ft = fileType(file) || {ext:'text/plain'};
+    return req.CPCache.store('ipfs-file-' + req.body.hash, () => IPFS.get(req.body.hash)).then(file => {
+        let ft = fileType(file) || {ext: 'text/plain'};
         let result = {};
 
         if (ft !== null)
@@ -34,8 +34,8 @@ router.all('/get', function (req, res, next) {
 
 router.all('/getFile', function (req, res, next) {
     let hash = req.query.hash || req.body.hash;
-    return IPFS.get(hash).then(file => {
-        let ft = fileType(file) || {ext:'text/plain'};
+    return req.CPCache.store('ipfs-file-' + hash, () => IPFS.get(hash)).then(file => {
+        let ft = fileType(file) || {ext: 'text/plain'};
         res.header("Content-Type", mime.lookup(ft.ext));
         res.send(new Buffer(file));
     }).catch(_ => {
@@ -52,6 +52,7 @@ router.post('/delete', function (req, res, next) {
                 padId: req.body.padId,
                 fileDeleteHash: req.body.hash
             }).then(() => {
+                req.CPCache.delete('ipfs-file-' + req.body.hash);
                 return res.send({success: true});
             })
 

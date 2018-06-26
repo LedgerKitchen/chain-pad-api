@@ -14,7 +14,7 @@ router.all('/getAddressByPoints', function (req, res, next) {
         return res.send({success: false, message: "Coordinates weren't set, please set their."});
     }
 
-    CPUtils.getAddressByPoints(data).then(address => {
+    req.CPCache.store('geo-' + data.latitude + '#' + data.longitude, () => CPUtils.getAddressByPoints(data)).then(address => {
         return res.send({success: true, address: address});
     }).catch(error => {
         res.send({success: false, message: error.toString()});

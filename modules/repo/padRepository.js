@@ -1,5 +1,4 @@
 'use strict';
-'use strict';
 
 const Assets = require('../Assets');
 const SHA256 = require("crypto-js/sha256");
@@ -17,23 +16,27 @@ class Pad extends Assets {
         this.asset = require('config').get('chain-pad.architecture.assets.pad');
     }
 
-    static event(connect, arEvent, currentParticipant) {
+    static event(connect, arEvent, currentParticipant, cacheStore) {
         let Pad = new this(connect),
             mAction,
-            sendFCM = false;
+            sendFCM = false,
+            getPad = false;
         //console.log(arEvent, currentParticipant);
 
         switch (arEvent.action) {
             case 'createPad':
                 mAction = 'create';
+                getPad = true;
                 break;
             case 'updatePad':
                 mAction = 'update';
+                getPad = true;
                 break;
             case 'addFilesPad':
                 break;
             case 'acceptPad':
                 sendFCM = true;
+                getPad = true;
                 if (arEvent.pad.status === 'CLOSED') {
                     mAction = 'archive';
                 } else {
@@ -42,62 +45,93 @@ class Pad extends Assets {
                 break;
             case 'declinePad':
                 sendFCM = true;
+                getPad = true;
                 mAction = 'decline';
                 break;
             case 'publishPad':
                 sendFCM = true;
+                getPad = true;
                 mAction = 'invite';
                 break;
-            /* case 'deletePad':
-                 sendFCM = true;
-                 mAction = 'accept';
-                 break;*/
+            case 'deletePad':
+                sendFCM = false;
+                mAction = 'accept';
+                break;
         }
 
-        if (sendFCM && arEvent.pad.participantsInvited.length > 0) {
-            Pad.getPads({}, {padId: arEvent.padId}).then(pad => {
+        if (cacheStore) {
+            cacheStore.delete('item-#' + arEvent.padId);
+            if (!getPad) {
+                cacheStore.deleteByStartStrKey(currentParticipant);
+            }
+        }
+
+
+        if (getPad) {
+            Pad.getPads({padId: arEvent.padId}).then(pad => {
                 delete pad.history;
                 let allParticipants = pad.participantsInvited.concat([pad.owner]);
                 if (allParticipants.length > 0) {
                     return Promise.all(allParticipants.map(function (user) {
                         return User.getUserMongo({userId: user.userId}, 'id')
                     })).then(users => {
-                        let fcmReceivers = [];
-
-                        users.forEach(function (user) {
-                            if (user.userId === currentParticipant) {
-                                currentParticipant = user;
+                        if (cacheStore) {
+                            cacheStore.add('item-#' + arEvent.padId, pad);
+                            let list = CPUtils.excludeItemFromArray('padId', arEvent.padId, cacheStore.get(currentParticipant.networkCard + '#padList', false));
+                            if (list && list.length) {
+                                list = [pad].concat(list);
                             } else {
-                                user.toObject().device.forEach((device) => {
-                                    fcmReceivers.push(device);
-                                });
+                                list = [pad];
                             }
-                        });
+                            cacheStore.add(currentParticipant.networkCard + '#padList', list);
+                        }
 
-                        fcmReceivers = CPUtils.arrayUnique(fcmReceivers);
+                        /* FCM Message*/
+                        if (sendFCM && arEvent.pad.participantsInvited.length > 0) {
+                            let fcmReceivers = [],
+                                initiator = false;
 
-                        FCM.sendMessage(fcmReceivers, {
-                            data: {
-                                "type": mAction,
-                                "padId": pad.padId,
-                                "pad": pad,
+                            users.forEach(function (user) {
+                                if (user.userId === currentParticipant) {
+                                    currentParticipant = user;
+                                } else {
+                                    user.toObject().device.forEach((device) => {
+                                        fcmReceivers.push(device);
+                                    });
+                                }
+                            });
 
-                                "initiator": currentParticipant.phone,
-                                "padTitle": pad.name
+                            fcmReceivers = CPUtils.arrayUnique(fcmReceivers);
+
+                            if (currentParticipant.name) {
+                                initiator = currentParticipant.name;
                             }
-                        });
+                            if (currentParticipant.lastName) {
+                                initiator = (initiator) ? initiator + ' ' + currentParticipant.lastName : currentParticipant.lastName;
+                            }
+
+                            if (!initiator) {
+                                initiator = currentParticipant.phone;
+                            }
+
+                            FCM.sendMessage(fcmReceivers, {
+                                data: {
+                                    "type": mAction,
+                                    "padId": pad.padId,
+                                    "pad": pad,
+
+                                    "initiator": initiator,
+                                    "padTitle": pad.name
+                                }
+                            });
+                        }
                     });
                 }
             });
         }
     }
 
-    getPads(arParams = {}, arFilter = {}) {
-        // if (arParams.hasOwnProperty('user')) {
-        //     if (arParams.user.hasOwnProperty('isAdmin') && arParams.user.isAdmin === true) {
-        //         Object.assign(arFilter, {'owner': arParams.user.id})
-        //     }
-        // }
+    getPads(arFilter = {}) {
 
         if (arFilter.hasOwnProperty('padId')) {
             return this.getAssetById({

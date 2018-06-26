@@ -4,6 +4,7 @@ const User = require('./repo/userRepository');
 const CPLedger = require("./CPLedger");
 const CPUtils = require('./CPUtils');
 
+
 module.exports = {
     verifyToken: function (req, res, next) {
         let token = req.body.token || req.query.token || req.header('token');
@@ -29,8 +30,12 @@ module.exports = {
 
         return res.json({success: false, message: "Access denied (Only Admin).", httpErrorCode: 403});
     },
+    cacheInit: function (req, res, next) {
+        req.CPCache = req.app.CacheService;
+        return next()
+    },
     createHLFConnection: function (req, res, next) {
-        req.CPLedger = new CPLedger();
+        req.CPLedger = new CPLedger(req.CPCache);
         return next()
     }
 };

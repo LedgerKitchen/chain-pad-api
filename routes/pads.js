@@ -12,16 +12,9 @@ const IPFS = new IPFSRepository(process.env.IPFS_URL);
 /******************* PADS ROUTES *******************/
 ///pads/new
 router.post("/", function (req, res, next) {
-
     return req.CPLedger.init(req.user.networkCard)
         .then((Ledger) => {
-            return Ledger.Pad.getPads({
-                user: {
-                    isAdmin: req.user === 'ADMIN',
-                    id: req.user.userId,
-                    role: req.user.role,
-                }
-            }).then(pads => {
+            return req.CPCache.store(req.user.networkCard + '#padList', () => Ledger.Pad.getPads()).then(pads => {
                 return res.json({success: true, items: pads, user: req.user});
             })
         }).catch((result) => {
@@ -40,14 +33,14 @@ router.post("/new", function (req, res, next) {
             if (data.token) {
                 delete data.token
             }
-            if(data.fcmId){
+            if (data.fcmId) {
                 delete data.fcmId;
             }
-            if(data.locale){
+            if (data.locale) {
                 delete data.locale;
             }
 
-            if(data.test){
+            if (data.test) {
                 delete data.test;
             }
             return Ledger.Pad.createPad(Object.assign(data, {owner: req.user.userId}))
@@ -96,14 +89,14 @@ router.post("/edit", function (req, res, next) {
                 delete data.token
             }
 
-            if(data.fcmId){
+            if (data.fcmId) {
                 delete data.fcmId;
             }
-            if(data.locale){
+            if (data.locale) {
                 delete data.locale;
             }
 
-            if(data.test){
+            if (data.test) {
                 delete data.test;
             }
 
@@ -119,7 +112,6 @@ router.post("/edit", function (req, res, next) {
                                 return res.json(Object.assign(result, {padId: data.padId}));
                             });
                         }).catch(error => {
-                            console.log(error);
                             return res.json({
                                 success: true,
                                 padId: data.padId,
@@ -144,15 +136,9 @@ router.post("/detail", function (req, res, next) {
             if (!req.body.padId) {
                 throw new Error('Missing required field padId');
             }
-            return Ledger.Pad.getPads({
-                user: {
-                    isAdmin: req.user === 'ADMIN',
-                    id: req.user.userId,
-                    role: req.user.role,
-                }
-            }, {
+            return req.CPCache.store('item-#' + req.body.padId, () => Ledger.Pad.getPads({
                 padId: req.body.padId || false
-            }).then(pad => {
+            })).then(pad => {
 
                 return res.json({success: true, item: pad, user: req.user});
             })
@@ -227,6 +213,9 @@ router.post("/delete", function (req, res, next) {
             return Ledger.Pad.deletePad({
                 padId: req.body.padId
             }).then(result => {
+
+                req.CPCache.delete('item-#' + req.body.padId);
+                req.CPCache.add(req.user.networkCard + '#padList', CPUtils.excludeItemFromArray('padId', req.body.padId, req.CPCache.get(req.user.networkCard + '#padList', false)));
 
                 return res.json(result);
             })

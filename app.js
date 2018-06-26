@@ -5,6 +5,9 @@ let bodyParser = require('body-parser');
 let multer = require('multer');
 let middlewares = require('./modules/CPMiddlewares');
 let CPLogger = require('./modules/CPLogger.js');
+let onFinished = require('on-finished');
+const CacheService = require('./modules/repo/lib/Cache');
+const CPLedger = require("./modules/CPLedger");
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,13 +20,12 @@ let storage = multer.diskStorage({
 let filesUpload = multer({storage: storage});
 
 let app = express();
+app.CacheService = new CacheService(86400 * 180);
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false, limit: '100mb'}));
 app.use(bodyParser.json());
 app.use(cookieParser());
-
-let onFinished = require('on-finished');
 
 app.use(function (req, res, next) {
 
@@ -47,11 +49,11 @@ app.use(function (req, res, next) {
 app.use('/', require('./routes/index'));
 
 app.use('/auth', require('./routes/auth'));
-app.use('/history', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/history'));//This only preview version
-app.use('/users', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/users'));
-app.use('/pads', [filesUpload.array('padFiles'), middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/pads'));
-app.use('/pads/file', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/files'));
-app.use('/pads/geo', [middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/geo'));
+app.use('/history', [middlewares.verifyToken, middlewares.cacheInit, middlewares.createHLFConnection], require('./routes/history'));//This only preview version
+app.use('/users', [middlewares.verifyToken, middlewares.cacheInit, middlewares.createHLFConnection], require('./routes/users'));
+app.use('/pads', [filesUpload.array('padFiles'), middlewares.cacheInit, middlewares.verifyToken, middlewares.createHLFConnection], require('./routes/pads'));
+app.use('/pads/file', [middlewares.verifyToken, middlewares.cacheInit, middlewares.createHLFConnection], require('./routes/files'));
+app.use('/pads/geo', [middlewares.verifyToken, middlewares.cacheInit, middlewares.createHLFConnection], require('./routes/geo'));
 /******************* END ROUTES *******************/
 
 /******************* CATCH ERRORS *******************/
