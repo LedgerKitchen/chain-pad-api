@@ -75,7 +75,24 @@ class Pad extends Assets {
                     return Promise.all(allParticipants.map(function (user) {
                         return User.getUserMongo({userId: user.userId}, 'id')
                     })).then(users => {
+                        let fcmReceivers = [],
+                            initiator = false;
+
+
+                        users.forEach(function (user) {
+                            if (user.userId === currentParticipant) {
+                                currentParticipant = user;
+                            } else {
+                                user.toObject().device.forEach((device) => {
+                                    fcmReceivers.push(device);
+                                });
+                            }
+                        });
+
+                        fcmReceivers = CPUtils.arrayUnique(fcmReceivers);
+
                         if (cacheStore) {
+
                             cacheStore.add('item-#' + arEvent.padId, pad);
                             let list = CPUtils.excludeItemFromArray('padId', arEvent.padId, cacheStore.get(currentParticipant.networkCard + '#padList', false));
                             if (list && list.length) {
@@ -83,25 +100,12 @@ class Pad extends Assets {
                             } else {
                                 list = [pad];
                             }
+
                             cacheStore.add(currentParticipant.networkCard + '#padList', list);
                         }
 
                         /* FCM Message*/
                         if (sendFCM && arEvent.pad.participantsInvited.length > 0) {
-                            let fcmReceivers = [],
-                                initiator = false;
-
-                            users.forEach(function (user) {
-                                if (user.userId === currentParticipant) {
-                                    currentParticipant = user;
-                                } else {
-                                    user.toObject().device.forEach((device) => {
-                                        fcmReceivers.push(device);
-                                    });
-                                }
-                            });
-
-                            fcmReceivers = CPUtils.arrayUnique(fcmReceivers);
 
                             if (currentParticipant.name) {
                                 initiator = currentParticipant.name;
