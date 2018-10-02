@@ -5,7 +5,7 @@ const request = require('request-promise'),
 module.exports = {
     init: function (connector) {
 
-        //connector = connector || process.env.SMS_CONNECTOR;
+        connector = connector || process.env.SMS_CONNECTOR;
 
         console.log('Set sms connector as ' + connector || 'DEFAULT(US)');
 
