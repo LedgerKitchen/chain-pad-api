@@ -4,7 +4,10 @@ const Participants = require('../Participants');
 const SHA256 = require("crypto-js/sha256");
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const db = mongoose.connect(process.env.MONGO_HOST, {useNewUrlParser: true});
+const db = mongoose.connect(process.env.MONGO_HOST, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+});
 db.Promise = require('bluebird');
 const UserMongo = require('../models/userModel');
 const log = require('../CPLogger');
